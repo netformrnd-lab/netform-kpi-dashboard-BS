@@ -1,0 +1,4521 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>넷폼알앤디 KPI 대시보드 v16</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* 라이트 모드 - 토스 컬러 시스템 */
+            --bg: #f7f8fa;
+            --bg-elevated: #ffffff;
+            --blue: #3182f6;
+            --blue-light: #e8f3ff;
+            --blue-dark: #1b64da;
+            --green: #00c471;
+            --green-light: #e5f9ed;
+            --red: #f04452;
+            --red-light: #ffebee;
+            --orange: #ff8a00;
+            --orange-light: #fff3e0;
+            --text-primary: #191f28;
+            --text-secondary: #4e5968;
+            --text-tertiary: #8b95a1;
+            --text-disabled: #b0b8c1;
+            --border: #e5e8eb;
+            --border-light: #f2f4f6;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+        }
+
+        /* 다크 모드 */
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --bg-elevated: #1a1a1a;
+            --blue: #3182f6;
+            --blue-light: rgba(49, 130, 246, 0.15);
+            --blue-dark: #4593fc;
+            --green: #00c471;
+            --green-light: rgba(0, 196, 113, 0.15);
+            --red: #f04452;
+            --red-light: rgba(240, 68, 82, 0.15);
+            --orange: #ff8a00;
+            --orange-light: rgba(255, 138, 0, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b8c1;
+            --text-tertiary: #6b7684;
+            --text-disabled: #4e5968;
+            --border: #2a2a2a;
+            --border-light: #1f1f1f;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== 레이아웃 ========== */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ========== 프레젠테이션 모드 ========== */
+        .presentation-mode .sidebar {
+            display: none !important;
+        }
+
+        .presentation-mode .hero-title {
+            font-size: 36px;
+        }
+
+        .presentation-mode .stat-value {
+            font-size: 48px;
+        }
+
+        .presentation-mode .dept-name {
+            font-size: 20px;
+        }
+
+        .presentation-mode .dept-pct {
+            font-size: 36px;
+        }
+
+        .presentation-mode .winner-score {
+            font-size: 40px;
+        }
+
+        .presentation-mode .chart-area {
+            height: 350px;
+        }
+
+        .presentation-indicator {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--blue);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
+            display: none;
+        }
+
+        .presentation-mode .presentation-indicator {
+            display: block;
+        }
+
+        /* ========== 사이드바 ========== */
+        .sidebar {
+            width: 240px;
+            min-width: 240px;
+            background: var(--bg-elevated);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 12px 24px;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 24px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--blue);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 10px;
+        }
+
+        .logo-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+
+        .nav-section { margin-bottom: 20px; }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            padding: 0 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--blue-light);
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        /* 알림 배지 */
+        .alert-badge {
+            width: 20px;
+            height: 20px;
+            background: var(--red);
+            color: white;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .user-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .user-role { font-size: 12px; color: var(--text-tertiary); }
+
+        /* ========== 메인 ========== */
+        .main {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* ========== 상단 슬로건 히어로 배너 ========== */
+        .top-slogan-bar {
+            background: linear-gradient(135deg, #3182f6 0%, #1b64da 50%, #0050c8 100%);
+            padding: 40px 48px;
+            text-align: center;
+            position: relative;
+        }
+
+        .top-slogan-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .slogan-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .slogan-company {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .slogan-main {
+            font-size: 32px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+            margin-bottom: 24px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .slogan-main::before {
+            content: '"';
+            opacity: 0.6;
+        }
+
+        .slogan-main::after {
+            content: '"';
+            opacity: 0.6;
+        }
+
+        .slogan-highlight {
+            color: #fef08a;
+        }
+
+        .slogan-progress-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .slogan-progress-bar {
+            width: 200px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .slogan-progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .slogan-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .slogan-current {
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+        }
+
+        .slogan-target {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .slogan-achievement {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* 다크모드 슬로건 배너 */
+        [data-theme="dark"] .top-slogan-bar {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);
+        }
+
+        /* 프레젠테이션 모드 */
+        .presentation-mode .top-slogan-bar {
+            padding: 56px 48px;
+        }
+
+        .presentation-mode .slogan-main {
+            font-size: 44px;
+        }
+
+        .presentation-mode .slogan-company {
+            font-size: 18px;
+        }
+
+        .presentation-mode .slogan-stats {
+            font-size: 18px;
+        }
+
+        .presentation-mode .slogan-current {
+            font-size: 24px;
+        }
+
+        /* ========== 히어로 ========== */
+        .hero {
+            background: var(--bg-elevated);
+            padding: 32px 48px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .hero-title-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .hero-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .hero-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .hero-period-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* 마지막 업데이트 표시 */
+        .last-update {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 기간 필터 */
+        .period-filter {
+            display: flex;
+            gap: 8px;
+            margin-right: 8px;
+        }
+
+        .period-select {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .presentation-mode .hero {
+            padding: 48px;
+        }
+
+        .presentation-mode .hero-title {
+            font-size: 32px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s ease;
+        }
+
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--blue-dark);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* 스탯 그리드 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            background: var(--border-light);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        /* 숫자 카운팅 애니메이션 */
+        .stat-value.counting {
+            transition: none;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green);
+        }
+
+        .stat-change.down { color: var(--red); }
+
+        /* ========== 콘텐츠 ========== */
+        .content {
+            padding: 32px 48px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        /* 카드 */
+        .card {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* 차트 그리드 */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .chart-area {
+            height: 280px;
+            position: relative;
+        }
+
+        /* 호버 툴팁 */
+        .custom-tooltip {
+            position: absolute;
+            background: var(--text-primary);
+            color: white;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .custom-tooltip.show {
+            opacity: 1;
+        }
+
+        .custom-tooltip-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .custom-tooltip-value {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        /* 도넛 */
+        .donut-layout {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .donut-wrap {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            flex-shrink: 0;
+        }
+
+        .donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .donut-value {
+            font-size: 40px;
+            font-weight: 800;
+            color: var(--blue);
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+
+        .donut-label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        .donut-stats {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .donut-stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .donut-stat-row:hover {
+            background: var(--blue-light);
+        }
+
+        .donut-stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .donut-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .donut-stat-value.green { color: var(--green); }
+        .donut-stat-value.orange { color: var(--orange); }
+
+        /* ========== 부서 그리드 ========== */
+        .dept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 16px;
+        }
+
+        .dept-card {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .dept-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--blue);
+        }
+
+        /* 30% 미만 부서 강조 */
+        .dept-card.critical-alert {
+            border-color: var(--red);
+            background: var(--red-light);
+        }
+
+        .dept-card.critical-alert:hover {
+            border-color: var(--red);
+        }
+
+        .dept-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .dept-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .dept-leader {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        /* 수정자 표시 */
+        .dept-updated-by {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dept-pct {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--blue);
+        }
+
+        .dept-pct.low { color: var(--orange); }
+        .dept-pct.critical { color: var(--red); }
+
+        .dept-bar {
+            height: 6px;
+            background: var(--bg);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .dept-bar-fill {
+            height: 100%;
+            background: var(--blue);
+            border-radius: 3px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0;
+        }
+
+        .dept-bar-fill.low { background: var(--orange); }
+        .dept-bar-fill.critical { background: var(--red); }
+
+        /* 프로그레스 바 애니메이션 */
+        .dept-bar-fill.animated {
+            animation: progressGrow 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes progressGrow {
+            from { width: 0; }
+        }
+
+        .dept-meta {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        /* ========== 성과자 ========== */
+        .winners-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .winner-card {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-lg);
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s ease;
+        }
+
+        .winner-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .winner-card.gold { border-top: 3px solid #FFB800; }
+        .winner-card.silver { border-top: 3px solid #8B95A1; }
+        .winner-card.bronze { border-top: 3px solid #CD7F32; }
+
+        .winner-rank {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+            margin: 0 auto 20px;
+        }
+
+        .winner-card.gold .winner-rank { background: linear-gradient(135deg, #FFB800, #FFD54F); }
+        .winner-card.silver .winner-rank { background: linear-gradient(135deg, #8B95A1, #B0B8C1); }
+        .winner-card.bronze .winner-rank { background: linear-gradient(135deg, #CD7F32, #DDA15E); }
+
+        .winner-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: var(--blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 800;
+            color: white;
+            margin: 0 auto 16px;
+        }
+
+        .winner-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .winner-dept {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+        }
+
+        .winner-score {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--blue);
+        }
+
+        .winner-score-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        /* ========== 상세 페이지 ========== */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .detail-hero {
+            background: var(--bg-elevated);
+            padding: 32px 48px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.15s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--border-light);
+        }
+
+        .detail-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .detail-subtitle {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        .detail-stats {
+            margin-left: auto;
+            display: flex;
+            gap: 40px;
+        }
+
+        .detail-stat { text-align: center; }
+
+        .detail-stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--blue);
+        }
+
+        .detail-stat-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+
+        .detail-content {
+            padding: 32px 48px;
+        }
+
+        /* 탭 */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            background: var(--bg);
+            color: var(--text-secondary);
+            transition: all 0.15s ease;
+        }
+
+        .tab:hover {
+            background: var(--border-light);
+        }
+
+        .tab.active {
+            background: var(--blue);
+            color: white;
+        }
+
+        /* 멤버 그리드 */
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .member-card {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .member-card:hover {
+            background: var(--blue-light);
+        }
+
+        .member-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .member-info { flex: 1; }
+        .member-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .member-role { font-size: 13px; color: var(--text-tertiary); }
+        .member-right { text-align: right; }
+        .member-pct { font-size: 20px; font-weight: 800; color: var(--blue); }
+        .member-cnt { font-size: 12px; color: var(--text-tertiary); }
+
+        /* 업무 */
+        .task-section { margin-top: 24px; }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .task-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .btn-add {
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            background: var(--blue);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-add:hover {
+            background: var(--blue-dark);
+        }
+
+        .task-form {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .task-form.show { display: block; }
+
+        .task-form-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .input {
+            flex: 2;
+            min-width: 180px;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            transition: border-color 0.15s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .select {
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .task-item {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        /* 우선순위 바 */
+        .priority-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .priority-bar.high { background: var(--red); }
+        .priority-bar.medium { background: var(--orange); }
+        .priority-bar.low { background: var(--green); }
+
+        .task-item.has-priority {
+            padding-left: 24px;
+        }
+
+        .task-name {
+            flex: 2;
+            min-width: 140px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .task-name input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--blue);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            display: none;
+        }
+
+        .task-name input.show { display: block; }
+        .task-name span.hide { display: none; }
+
+        /* D-day 표시 */
+        .task-dday {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .task-dday.overdue {
+            background: var(--red-light);
+            color: var(--red);
+        }
+
+        .task-dday.urgent {
+            background: var(--orange-light);
+            color: var(--orange);
+        }
+
+        .task-dday.normal {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        .task-dday.done {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        /* 수정자 표시 */
+        .task-updated-by {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .task-select {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-xs {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-edit { background: var(--blue-light); color: var(--blue); }
+        .btn-del { background: var(--red-light); color: var(--red); }
+        .btn-history { background: var(--orange-light); color: var(--orange); }
+        .btn-edit:hover { background: #d0e4ff; }
+        .btn-del:hover { background: #ffd6d9; }
+        .btn-history:hover { background: #ffe4c4; }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 모달 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal.show { opacity: 1; pointer-events: auto; }
+
+        .modal-box {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 440px;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+
+        .modal.show .modal-box { transform: scale(1); }
+
+        .modal-header {
+            padding: 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .modal-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .modal-name { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .modal-dept { font-size: 14px; color: var(--text-tertiary); }
+
+        .modal-close {
+            margin-left: auto;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: var(--bg);
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-secondary);
+            transition: background 0.15s ease;
+        }
+
+        .modal-close:hover { background: var(--border-light); }
+
+        .modal-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            background: var(--bg);
+            padding: 24px;
+        }
+
+        .modal-stat { text-align: center; }
+        .modal-stat-value { font-size: 24px; font-weight: 800; color: var(--blue); }
+        .modal-stat-label { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
+
+        .modal-body {
+            padding: 20px 24px 28px;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .modal-task {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .modal-task-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .modal-task-sub { font-size: 12px; color: var(--text-tertiary); }
+        .modal-task-pct { font-size: 18px; font-weight: 800; color: var(--blue); }
+
+        /* 변경 이력 모달 */
+        .history-modal .modal-box {
+            max-width: 560px;
+        }
+
+        .history-modal .modal-header {
+            background: var(--blue-light);
+        }
+
+        .history-item {
+            padding: 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .history-action {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--blue);
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .history-detail {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .history-by {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 6px;
+        }
+
+        /* 토스트 */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--text-primary);
+            color: white;
+            padding: 16px 28px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1200px) {
+            .chart-grid { grid-template-columns: 1fr; }
+            .winners-grid { grid-template-columns: 1fr; }
+            .goal-banner { flex-wrap: wrap; gap: 16px; }
+            .goal-progress-bar { order: 3; max-width: 100%; flex-basis: 100%; margin: 0; }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .hero { padding: 24px; }
+            .content { padding: 24px; }
+            .detail-hero { padding: 24px; }
+            .detail-content { padding: 24px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .goal-banner { padding: 16px 24px; }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .donut-layout { flex-direction: column; }
+        }
+
+        /* 애니메이션 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate { animation: fadeIn 0.4s ease forwards; }
+
+        /* 다크모드 토글 */
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--border-light);
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            background: var(--bg-elevated);
+        }
+
+        .theme-icon-light,
+        .theme-icon-dark {
+            display: none;
+        }
+
+        :root .theme-icon-light { display: block; }
+        :root .theme-icon-dark { display: none; }
+        [data-theme="dark"] .theme-icon-light { display: none; }
+        [data-theme="dark"] .theme-icon-dark { display: block; }
+
+        /* ========== 회사 슬로건 배너 (숨김 - top-slogan-bar로 대체) ========== */
+        .slogan-banner {
+            display: none;
+        }
+
+        /* ========== KPI 섹션 ========== */
+        .kpi-section {
+            margin-top: 24px;
+        }
+
+        .kpi-card {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .kpi-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* KPI 미션 카드 */
+        .kpi-mission {
+            background: linear-gradient(135deg, var(--blue-light) 0%, var(--bg) 100%);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--blue);
+        }
+
+        .kpi-mission-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-mission-text {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        /* KPI 지표 그리드 */
+        .kpi-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-metric-card {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .kpi-metric-card:hover {
+            background: var(--blue-light);
+        }
+
+        .kpi-metric-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--blue);
+            line-height: 1;
+        }
+
+        .kpi-metric-unit {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--blue);
+        }
+
+        .kpi-metric-label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 8px;
+        }
+
+        .kpi-metric-period {
+            font-size: 11px;
+            color: var(--text-disabled);
+            margin-top: 4px;
+        }
+
+        /* KPI 조건 리스트 */
+        .kpi-conditions {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+
+        .kpi-conditions-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .kpi-condition-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .kpi-condition-item:last-child {
+            border-bottom: none;
+        }
+
+        .kpi-condition-bullet {
+            width: 6px;
+            height: 6px;
+            background: var(--blue);
+            border-radius: 50%;
+            margin-top: 7px;
+            flex-shrink: 0;
+        }
+
+        .kpi-condition-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* KPI 빈 상태 */
+        .kpi-empty {
+            text-align: center;
+            padding: 48px 20px;
+        }
+
+        .kpi-empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-empty-text {
+            font-size: 15px;
+            color: var(--text-tertiary);
+            margin-bottom: 20px;
+        }
+
+        .btn-kpi-add {
+            padding: 14px 28px;
+            border-radius: var(--radius-sm);
+            background: var(--blue);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-kpi-add:hover {
+            background: var(--blue-dark);
+        }
+
+        /* KPI 수정 모달 */
+        .kpi-modal .modal-box {
+            max-width: 640px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .kpi-modal .modal-header {
+            flex-shrink: 0;
+        }
+
+        .kpi-modal .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            max-height: none;
+            padding: 24px;
+        }
+
+        .kpi-form-section {
+            margin-bottom: 24px;
+        }
+
+        .kpi-form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .kpi-form-label .required {
+            color: var(--red);
+            font-size: 12px;
+        }
+
+        .kpi-form-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text-primary);
+            resize: vertical;
+            transition: border-color 0.15s ease;
+        }
+
+        .kpi-form-textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .kpi-form-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .kpi-form-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--blue);
+        }
+
+        .kpi-form-toggle-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .kpi-form-toggle-desc {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .kpi-form-items {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .kpi-form-items.show {
+            display: flex;
+        }
+
+        .kpi-form-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: var(--bg);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+        }
+
+        .kpi-form-item input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .kpi-form-item input:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .kpi-form-item input.small {
+            max-width: 80px;
+        }
+
+        .btn-remove-item {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--red-light);
+            color: var(--red);
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-add-item {
+            padding: 10px 16px;
+            border-radius: 8px;
+            background: var(--blue-light);
+            color: var(--blue);
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .kpi-form-condition {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .kpi-form-condition textarea {
+            flex: 1;
+            min-height: 60px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            resize: vertical;
+        }
+
+        .kpi-modal-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Initiative 목록 스타일 */
+        .initiative-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        .initiative-item:hover {
+            background: var(--border-light);
+        }
+        .init-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .init-status.operating { background: var(--green); }
+        .init-status.preparing { background: var(--orange); }
+        .init-status.not-started { background: var(--text-disabled); }
+        .init-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .init-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .init-meta {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            display: flex;
+            gap: 12px;
+        }
+        .init-assignee {
+            width: 80px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .init-operation {
+            width: 70px;
+            text-align: center;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .init-operation.operating {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        .init-operation.preparing {
+            background: var(--orange-light);
+            color: var(--orange);
+        }
+        .init-operation.not-started {
+            background: var(--border-light);
+            color: var(--text-tertiary);
+        }
+        .init-progress {
+            width: 120px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .init-progress-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .init-progress-fill {
+            height: 100%;
+            background: var(--blue);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        .init-progress-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            width: 35px;
+            text-align: right;
+        }
+        .init-actions {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .initiative-item:hover .init-actions {
+            opacity: 1;
+        }
+        .init-action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .init-action-btn.edit {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+        .init-action-btn.edit:hover {
+            background: var(--blue);
+            color: white;
+        }
+        .init-action-btn.delete {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        .init-action-btn.delete:hover {
+            background: var(--red);
+            color: white;
+        }
+
+        /* Initiative 모달 */
+        #initiativeModal .modal-box {
+            padding: 24px;
+        }
+        #initiativeModal .input,
+        #initiativeModal .select {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+        #initiativeModal .input:focus,
+        #initiativeModal .select:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        /* 자동 새로고침 표시 */
+        .auto-refresh-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-elevated);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+        .refresh-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">POUR</div>
+                <div class="logo-text">
+                    넷폼알앤디
+                    <span>KPI Dashboard</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">메인</div>
+                <div class="nav-item active" onclick="goMain()">대시보드</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">부서</div>
+                <div id="navDepts"></div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">범석</div>
+                    <div>
+                        <div class="user-name">김범석</div>
+                        <div class="user-role">그로스팀 매니저</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 메인 -->
+        <main class="main">
+            <!-- 메인 페이지 -->
+            <div class="page active" id="mainPage">
+                <!-- 상단 슬로건 히어로 배너 -->
+                <div class="top-slogan-bar">
+                    <div class="slogan-content">
+                        <div class="slogan-company">2026 넷폼알앤디</div>
+                        <div class="slogan-main">본질을 <span class="slogan-highlight">측정 & 관리</span>하며 2배 성장</div>
+                        <div class="slogan-progress-wrap">
+                            <div class="slogan-stats">
+                                <span>현재</span>
+                                <span class="slogan-current" id="topCurrentPct">72%</span>
+                                <span class="slogan-target">→ 목표 80%</span>
+                            </div>
+                            <div class="slogan-progress-bar">
+                                <div class="slogan-progress-fill" id="topProgressFill" style="width: 90%"></div>
+                            </div>
+                            <span class="slogan-achievement" id="topProgressText">90.0% 달성</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero">
+                    <div class="hero-top">
+                        <div class="hero-title-wrap">
+                            <h1 class="hero-title">전사 KPI 대시보드</h1>
+                            <div class="hero-meta-row">
+                                <span class="hero-period-text" id="periodLabel">2026년 1월 기준</span>
+                                <div class="last-update">
+                                    <div class="pulse-dot"></div>
+                                    <span id="lastUpdateText">마지막 업데이트: 1월 5일 15:36</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-actions">
+                            <div class="period-filter">
+                                <select class="period-select" id="yearFilter" onchange="updatePeriod()">
+                                    <option value="2026">2026년</option>
+                                    <option value="2025">2025년</option>
+                                </select>
+                                <select class="period-select" id="periodType" onchange="updatePeriod()">
+                                    <option value="month">월별</option>
+                                    <option value="quarter">분기별</option>
+                                </select>
+                                <select class="period-select" id="periodValue" onchange="updatePeriod()">
+                                    <option value="1">1월</option>
+                                    <option value="2">2월</option>
+                                    <option value="3">3월</option>
+                                    <option value="4">4월</option>
+                                    <option value="5">5월</option>
+                                    <option value="6">6월</option>
+                                    <option value="7">7월</option>
+                                    <option value="8">8월</option>
+                                    <option value="9">9월</option>
+                                    <option value="10">10월</option>
+                                    <option value="11">11월</option>
+                                    <option value="12">12월</option>
+                                </select>
+                            </div>
+                            <button class="theme-toggle" onclick="toggleTheme()" title="테마 변경">
+                                <span class="theme-icon-light">🌙</span>
+                                <span class="theme-icon-dark">☀️</span>
+                            </button>
+                            <button class="btn btn-secondary btn-icon" onclick="togglePresentation()" title="프레젠테이션 모드">📺</button>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">전체 진척률</div>
+                            <div class="stat-value" id="statProgress">0%</div>
+                            <div class="stat-change">↑ 전월 대비 +5%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">완료 업무</div>
+                            <div class="stat-value" id="statDone">0</div>
+                            <div class="stat-change">↑ 이번 주 +3건</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">등록 업무</div>
+                            <div class="stat-value" id="statTotal">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">참여 인원</div>
+                            <div class="stat-value" id="statMembers">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <!-- 차트 -->
+                    <div class="chart-grid">
+                        <div class="card">
+                            <div class="card-title">부서별 진척률</div>
+                            <div class="chart-area">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">전체 달성 현황</div>
+                            <div class="donut-layout">
+                                <div class="donut-wrap">
+                                    <canvas id="donutChart"></canvas>
+                                    <div class="donut-center">
+                                        <div class="donut-value" id="donutPct">0%</div>
+                                        <div class="donut-label">달성률</div>
+                                    </div>
+                                </div>
+                                <div class="donut-stats">
+                                    <div class="donut-stat-row" title="완료된 업무 수">
+                                        <span class="donut-stat-label">완료</span>
+                                        <span class="donut-stat-value green" id="dsDone">0</span>
+                                    </div>
+                                    <div class="donut-stat-row" title="진행중인 업무 수">
+                                        <span class="donut-stat-label">진행중</span>
+                                        <span class="donut-stat-value orange" id="dsPending">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 부서별 현황 -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">부서별 현황</div>
+                            <div class="section-subtitle">7개 부서</div>
+                        </div>
+                        <div class="dept-grid" id="deptGrid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상세 페이지 -->
+            <div class="page" id="detailPage">
+                <div class="detail-hero">
+                    <div class="detail-header">
+                        <button class="back-btn" onclick="goMain()">←</button>
+                        <div>
+                            <h1 class="detail-title" id="detailTitle">부서명</h1>
+                            <p class="detail-subtitle" id="detailSubtitle">리더</p>
+                        </div>
+                        <div class="detail-stats">
+                            <div class="detail-stat">
+                                <div class="detail-stat-value" id="detailProgress">0%</div>
+                                <div class="detail-stat-label">진척률</div>
+                            </div>
+                            <div class="detail-stat">
+                                <div class="detail-stat-value" id="detailTasks">0</div>
+                                <div class="detail-stat-label">업무</div>
+                            </div>
+                            <div class="detail-stat">
+                                <div class="detail-stat-value" id="detailMembers">0</div>
+                                <div class="detail-stat-label">인원</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-content">
+                    <div class="tabs" id="tabs"></div>
+
+                    <!-- KPI 섹션 -->
+                    <div class="kpi-section">
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <div class="kpi-title">팀 KPI</div>
+                                <button class="btn btn-secondary" onclick="openKpiModal()" id="kpiEditBtn" style="display:none">수정</button>
+                            </div>
+                            <div id="kpiContent"></div>
+                        </div>
+                    </div>
+
+                    <!-- 핵심 과제 / Initiative 목록 (팀별 동적) -->
+                    <div class="initiative-section" id="initiativeSection" style="margin-top: 24px;">
+                        <div class="card">
+                            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                                <div class="card-title" style="margin:0;" id="initSectionTitle">🎯 핵심 과제 현황</div>
+                                <button class="btn btn-primary" onclick="openInitiativeModal()" style="font-size:13px;" id="initAddBtn">
+                                    + 핵심 과제 추가
+                                </button>
+                            </div>
+                            <div class="initiative-stats" style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px;">
+                                <div class="init-stat-card" style="background:var(--blue-light); padding:16px; border-radius:12px; text-align:center;">
+                                    <div style="font-size:24px; font-weight:700; color:var(--blue);" id="initInProgress">0</div>
+                                    <div style="font-size:13px; color:var(--text-secondary);">진행 중</div>
+                                </div>
+                                <div class="init-stat-card" style="background:var(--green-light); padding:16px; border-radius:12px; text-align:center;">
+                                    <div style="font-size:24px; font-weight:700; color:var(--green);" id="initCompleted">0</div>
+                                    <div style="font-size:13px; color:var(--text-secondary);">완료</div>
+                                </div>
+                                <div class="init-stat-card" style="background:var(--orange-light); padding:16px; border-radius:12px; text-align:center;">
+                                    <div style="font-size:24px; font-weight:700; color:var(--orange);" id="initOperating">0</div>
+                                    <div style="font-size:13px; color:var(--text-secondary);">운영 중</div>
+                                </div>
+                                <div class="init-stat-card" style="background:var(--border-light); padding:16px; border-radius:12px; text-align:center;">
+                                    <div style="font-size:24px; font-weight:700; color:var(--text-primary);" id="initRate">0%</div>
+                                    <div style="font-size:13px; color:var(--text-secondary);">완료율</div>
+                                </div>
+                            </div>
+                            <div class="initiative-list" id="initiativeList"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 프레젠테이션 모드 표시 -->
+    <div class="presentation-indicator">프레젠테이션 모드 (ESC로 종료)</div>
+
+    <!-- 핵심 과제 / Initiative 추가/수정 모달 -->
+    <div class="modal" id="initiativeModal">
+        <div class="modal-box" style="max-width:500px;">
+            <div class="modal-header" style="border-bottom:1px solid var(--border-light); padding-bottom:16px;">
+                <div style="font-size:18px; font-weight:700;" id="initModalTitle">핵심 과제 추가</div>
+                <button class="modal-close" onclick="closeInitiativeModal()">✕</button>
+            </div>
+            <div class="modal-body" style="padding:20px 0;">
+                <input type="hidden" id="initEditId">
+                
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;" id="initNameLabel">과제명 *</label>
+                    <input type="text" class="input" id="initName" placeholder="예: KPI 대시보드 구축" style="width:100%;">
+                </div>
+                
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">담당자</label>
+                    <select class="select" id="initAssignee" style="width:100%;"></select>
+                </div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                    <div>
+                        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">상태</label>
+                        <select class="select" id="initStatus" style="width:100%;">
+                            <option value="진행중">진행중</option>
+                            <option value="완료">완료</option>
+                            <option value="보류">보류</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">운영 상태</label>
+                        <select class="select" id="initOpStatus" style="width:100%;">
+                            <option value="미시작">미시작</option>
+                            <option value="준비중">준비중</option>
+                            <option value="운영중">운영중</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                    <div>
+                        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">진행률</label>
+                        <select class="select" id="initProgress" style="width:100%;">
+                            <option value="0">0%</option>
+                            <option value="10">10%</option>
+                            <option value="20">20%</option>
+                            <option value="30">30%</option>
+                            <option value="40">40%</option>
+                            <option value="50">50%</option>
+                            <option value="60">60%</option>
+                            <option value="70">70%</option>
+                            <option value="80">80%</option>
+                            <option value="90">90%</option>
+                            <option value="100">100%</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">마감일</label>
+                        <input type="date" class="input" id="initDueDate" style="width:100%;">
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:12px; padding-top:16px; border-top:1px solid var(--border-light);">
+                <button class="btn btn-secondary" onclick="closeInitiativeModal()">취소</button>
+                <button class="btn btn-primary" onclick="saveInitiative()">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모달 -->
+    <div class="modal" id="modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-avatar" id="modalAvatar">이름</div>
+                <div>
+                    <div class="modal-name" id="modalName">이름</div>
+                    <div class="modal-dept" id="modalDept">부서</div>
+                </div>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-stats">
+                <div class="modal-stat">
+                    <div class="modal-stat-value" id="modalProgress">0%</div>
+                    <div class="modal-stat-label">평균 진척률</div>
+                </div>
+                <div class="modal-stat">
+                    <div class="modal-stat-value" id="modalTasks">0</div>
+                    <div class="modal-stat-label">담당 업무</div>
+                </div>
+                <div class="modal-stat">
+                    <div class="modal-stat-value" id="modalDone">0</div>
+                    <div class="modal-stat-label">완료</div>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- 변경 이력 모달 -->
+    <div class="modal history-modal" id="historyModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-name" id="historyTaskName">업무명</div>
+                    <div class="modal-dept">변경 이력</div>
+                </div>
+                <button class="modal-close" onclick="closeHistoryModal()">✕</button>
+            </div>
+            <div class="modal-body" id="historyBody"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">저장되었습니다</div>
+
+    <!-- KPI 수정 모달 -->
+    <div class="modal kpi-modal" id="kpiModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-name" id="kpiModalTitle">팀 KPI 설정</div>
+                    <div class="modal-dept" id="kpiModalSubtitle">그로스팀</div>
+                </div>
+                <button class="modal-close" onclick="closeKpiModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <!-- 미션 (필수) -->
+                <div class="kpi-form-section">
+                    <div class="kpi-form-label">
+                        팀 미션 <span class="required">필수</span>
+                    </div>
+                    <textarea class="kpi-form-textarea" id="kpiMissionInput" placeholder="팀의 미션과 역할을 설명해주세요..."></textarea>
+                </div>
+
+                <!-- 핵심 지표 (선택) -->
+                <div class="kpi-form-section">
+                    <label class="kpi-form-toggle">
+                        <input type="checkbox" id="kpiMetricsToggle" onchange="toggleKpiMetrics()">
+                        <div>
+                            <div class="kpi-form-toggle-label">핵심 지표 추가</div>
+                            <div class="kpi-form-toggle-desc">수치로 측정 가능한 목표를 설정합니다 (선택)</div>
+                        </div>
+                    </label>
+                    <div class="kpi-form-items" id="kpiMetricsItems">
+                        <div id="kpiMetricsList"></div>
+                        <button class="btn-add-item" onclick="addMetricField()">+ 지표 추가</button>
+                    </div>
+                </div>
+
+                <!-- 조건 (선택) -->
+                <div class="kpi-form-section">
+                    <label class="kpi-form-toggle">
+                        <input type="checkbox" id="kpiConditionsToggle" onchange="toggleKpiConditions()">
+                        <div>
+                            <div class="kpi-form-toggle-label">조건 추가</div>
+                            <div class="kpi-form-toggle-desc">이니셔티브 선정 기준이나 조건을 설정합니다 (선택)</div>
+                        </div>
+                    </label>
+                    <div class="kpi-form-items" id="kpiConditionsItems">
+                        <div id="kpiConditionsList"></div>
+                        <button class="btn-add-item" onclick="addConditionField()">+ 조건 추가</button>
+                    </div>
+                </div>
+            </div>
+            <div class="kpi-modal-footer">
+                <button class="btn btn-secondary" onclick="closeKpiModal()">취소</button>
+                <button class="btn btn-primary" onclick="saveKpiData()">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== Supabase 연동 설정 ==========
+        const SupabaseConfig = {
+            url: 'https://gtdmqmanmzmtlgkkyasu.supabase.co',
+            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0ZG1xbWFubXptdGxna2t5YXN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1OTc4ODQsImV4cCI6MjA4MzE3Mzg4NH0.DfBnMHhrgxgnE7uLSPewPZpp1D6OkTumFMeQu0V-B_8',
+            enabled: true
+        };
+
+        // Supabase 클라이언트
+        let supabaseClient = null;
+        let isLoading = false;
+        let autoRefreshInterval = null;
+
+        // Initiative 데이터
+        let initiativeData = [];
+
+        // Supabase 클라이언트 초기화
+        function initSupabase() {
+            if (!SupabaseConfig.enabled || !SupabaseConfig.url || !SupabaseConfig.anonKey) {
+                console.log('Supabase 연동 비활성화 상태 (로컬 저장소 사용)');
+                return null;
+            }
+            
+            const { createClient } = window.supabase;
+            supabaseClient = createClient(SupabaseConfig.url, SupabaseConfig.anonKey);
+            console.log('✅ Supabase 연결 완료');
+            return supabaseClient;
+        }
+
+        // ========== Initiative 관리 (KPI 대시보드 DB) ==========
+        
+        // Initiative 데이터 로드
+        async function loadInitiatives() {
+            if (!supabaseClient) return [];
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('initiatives')
+                    .select('*')
+                    .eq('sub_dept_id', curSub)
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                initiativeData = data || [];
+                console.log('✅ Initiative 로드 완료:', initiativeData.length, '개');
+                return initiativeData;
+            } catch (err) {
+                console.error('❌ Initiative 로드 실패:', err);
+                return [];
+            }
+        }
+
+        // Initiative 생성
+        async function createInitiative(init) {
+            if (!supabaseClient) return null;
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('initiatives')
+                    .insert({
+                        sub_dept_id: curSub,
+                        name: init.name,
+                        assignee: init.assignee,
+                        status: init.status,
+                        operation_status: init.operationStatus,
+                        progress: init.progress,
+                        due_date: init.dueDate || null,
+                        created_by: CURRENT_USER,
+                        updated_by: CURRENT_USER
+                    })
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                console.log('✅ Initiative 생성:', data.name);
+                return data;
+            } catch (err) {
+                console.error('❌ Initiative 생성 실패:', err);
+                return null;
+            }
+        }
+
+        // Initiative 수정
+        async function updateInitiative(id, updates) {
+            if (!supabaseClient) return false;
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('initiatives')
+                    .update({
+                        name: updates.name,
+                        assignee: updates.assignee,
+                        status: updates.status,
+                        operation_status: updates.operationStatus,
+                        progress: updates.progress,
+                        due_date: updates.dueDate || null,
+                        updated_at: new Date().toISOString(),
+                        updated_by: CURRENT_USER
+                    })
+                    .eq('id', id);
+                
+                if (error) throw error;
+                console.log('✅ Initiative 수정:', id);
+                return true;
+            } catch (err) {
+                console.error('❌ Initiative 수정 실패:', err);
+                return false;
+            }
+        }
+
+        // Initiative 삭제
+        async function deleteInitiative(id) {
+            if (!supabaseClient) return false;
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('initiatives')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                console.log('✅ Initiative 삭제:', id);
+                return true;
+            } catch (err) {
+                console.error('❌ Initiative 삭제 실패:', err);
+                return false;
+            }
+        }
+
+        // Initiative 목록 렌더링
+        function renderInitiatives() {
+            const container = document.getElementById('initiativeList');
+            if (!container) return;
+            
+            const termTitle = getTermLabel('title');
+            const termAdd = getTermLabel('add');
+            const termEmpty = getTermLabel('empty');
+            const icon = curSub === 'growth' ? '📋' : '🎯';
+            
+            if (initiativeData.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:40px; color:var(--text-tertiary);">
+                        <div style="font-size:32px; margin-bottom:12px;">${icon}</div>
+                        <div>등록된 ${termEmpty} 없습니다</div>
+                        <button class="btn btn-primary" onclick="openInitiativeModal()" style="margin-top:16px;">+ ${termAdd}</button>
+                    </div>
+                `;
+                updateInitiativeStats();
+                return;
+            }
+            
+            updateInitiativeStats();
+            
+            // 목록 렌더링
+            container.innerHTML = initiativeData.map(init => {
+                const statusClass = init.operation_status === '운영중' ? 'operating' 
+                    : init.operation_status === '준비중' ? 'preparing' : 'not-started';
+                const statusText = init.operation_status === '운영중' ? '운영 중' 
+                    : init.operation_status === '준비중' ? '준비 중' : '미시작';
+                const statusBadge = init.status === '완료' ? '✅' : init.status === '보류' ? '⏸️' : '🔥';
+                
+                return `
+                    <div class="initiative-item">
+                        <div class="init-status ${statusClass}"></div>
+                        <div class="init-info">
+                            <div class="init-name">${statusBadge} ${init.name}</div>
+                            <div class="init-meta">
+                                <span>📅 ${init.due_date || '일정 미설정'}</span>
+                                <span>상태: ${init.status}</span>
+                            </div>
+                        </div>
+                        <div class="init-assignee">${init.assignee || '-'}</div>
+                        <div class="init-operation ${statusClass}">${statusText}</div>
+                        <div class="init-progress">
+                            <div class="init-progress-bar">
+                                <div class="init-progress-fill" style="width:${init.progress}%"></div>
+                            </div>
+                            <div class="init-progress-text">${init.progress}%</div>
+                        </div>
+                        <div class="init-actions">
+                            <button class="init-action-btn edit" onclick="editInitiative('${init.id}')">수정</button>
+                            <button class="init-action-btn delete" onclick="confirmDeleteInitiative('${init.id}', '${init.name}')">삭제</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Initiative 통계 업데이트
+        function updateInitiativeStats() {
+            const inProgress = initiativeData.filter(i => i.status === '진행중').length;
+            const completed = initiativeData.filter(i => i.status === '완료').length;
+            const operating = initiativeData.filter(i => i.operation_status === '운영중').length;
+            const total = initiativeData.length;
+            const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            document.getElementById('initInProgress').textContent = inProgress;
+            document.getElementById('initCompleted').textContent = completed;
+            document.getElementById('initOperating').textContent = operating;
+            document.getElementById('initRate').textContent = rate + '%';
+        }
+
+        // Initiative 모달 열기 (추가)
+        function openInitiativeModal() {
+            document.getElementById('initModalTitle').textContent = getTermLabel('add');
+            document.getElementById('initNameLabel').textContent = getTermLabel('name') + ' *';
+            document.getElementById('initEditId').value = '';
+            document.getElementById('initName').value = '';
+            document.getElementById('initStatus').value = '진행중';
+            document.getElementById('initOpStatus').value = '미시작';
+            document.getElementById('initProgress').value = '0';
+            document.getElementById('initDueDate').value = '';
+            
+            // 담당자 목록 업데이트
+            updateInitAssignees();
+            document.getElementById('initAssignee').value = '';
+            
+            document.getElementById('initiativeModal').classList.add('show');
+        }
+
+        // Initiative 모달 열기 (수정)
+        function editInitiative(id) {
+            const init = initiativeData.find(i => i.id === id);
+            if (!init) return;
+            
+            document.getElementById('initModalTitle').textContent = getTermLabel('edit');
+            document.getElementById('initNameLabel').textContent = getTermLabel('name') + ' *';
+            document.getElementById('initEditId').value = id;
+            document.getElementById('initName').value = init.name;
+            document.getElementById('initStatus').value = init.status;
+            document.getElementById('initOpStatus').value = init.operation_status;
+            document.getElementById('initProgress').value = init.progress;
+            document.getElementById('initDueDate').value = init.due_date || '';
+            
+            updateInitAssignees();
+            document.getElementById('initAssignee').value = init.assignee || '';
+            
+            document.getElementById('initiativeModal').classList.add('show');
+        }
+
+        // Initiative 모달 닫기
+        function closeInitiativeModal() {
+            document.getElementById('initiativeModal').classList.remove('show');
+        }
+
+        // Initiative 담당자 목록 업데이트
+        function updateInitAssignees() {
+            const select = document.getElementById('initAssignee');
+            const d = ORG.departments.find(x => x.id === curDept);
+            const sub = d?.subDepts.find(s => s.id === curSub);
+            
+            select.innerHTML = '<option value="">담당자 선택</option>';
+            sub?.members.forEach(m => {
+                select.innerHTML += `<option value="${m}">${m}</option>`;
+            });
+        }
+
+        // Initiative 저장
+        async function saveInitiative() {
+            const name = document.getElementById('initName').value.trim();
+            if (!name) {
+                alert('Initiative 이름을 입력하세요.');
+                return;
+            }
+            
+            const initData = {
+                name,
+                assignee: document.getElementById('initAssignee').value,
+                status: document.getElementById('initStatus').value,
+                operationStatus: document.getElementById('initOpStatus').value,
+                progress: parseInt(document.getElementById('initProgress').value),
+                dueDate: document.getElementById('initDueDate').value
+            };
+            
+            const editId = document.getElementById('initEditId').value;
+            
+            if (editId) {
+                // 수정
+                const success = await updateInitiative(editId, initData);
+                if (success) {
+                    toast(`✏️ ${getTermLabel('title')}가 수정되었습니다`);
+                }
+            } else {
+                // 추가
+                const result = await createInitiative(initData);
+                if (result) {
+                    toast(`✅ ${getTermLabel('title')}가 추가되었습니다`);
+                }
+            }
+            
+            closeInitiativeModal();
+            await loadInitiatives();
+            renderInitiatives();
+            updateLastUpdateTime();
+        }
+
+        // Initiative 삭제 확인
+        function confirmDeleteInitiative(id, name) {
+            if (confirm(`"${name}" ${getTermLabel('title')}를 삭제하시겠습니까?`)) {
+                deleteInitiativeById(id);
+            }
+        }
+
+        // Initiative 삭제 실행
+        async function deleteInitiativeById(id) {
+            const success = await deleteInitiative(id);
+            if (success) {
+                toast(`🗑️ ${getTermLabel('title')}가 삭제되었습니다`);
+                await loadInitiatives();
+                renderInitiatives();
+                updateLastUpdateTime();
+            }
+        }
+
+        // 자동 새로고침 시작 (30초)
+        function startAutoRefresh() {
+            // 기존 인터벌 제거
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            // 30초마다 새로고침
+            autoRefreshInterval = setInterval(async () => {
+                console.log('🔄 자동 새로고침...');
+                await refreshAllData();
+                updateLastUpdateTime();
+            }, 30000);
+            
+            console.log('⏰ 자동 새로고침 시작 (30초 간격)');
+        }
+
+        // 전체 데이터 새로고침
+        async function refreshAllData() {
+            if (supabaseClient) {
+                await loadTasksFromSupabase();
+                await loadKpiFromSupabase();
+                if (curSub) {
+                    await loadInitiatives();
+                }
+            }
+            
+            renderDeptGrid();
+            calcAll();
+            
+            // 상세 페이지 열려있으면 업데이트
+            if (curDept && curSub) {
+                renderInitiatives();
+                renderKpiSection();
+            }
+        }
+
+        // Realtime 구독
+        function subscribeToChanges() {
+            if (!supabaseClient) return;
+
+            // tasks 테이블 변경 구독
+            supabaseClient
+                .channel('tasks-realtime')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, async (payload) => {
+                    console.log('📡 Task 변경:', payload);
+                    await loadTasksFromSupabase();
+                    renderDeptGrid();
+                    calcAll();
+                    toast('🔄 데이터가 동기화되었습니다');
+                })
+                .subscribe();
+
+            // team_kpis 테이블 변경 구독
+            supabaseClient
+                .channel('kpi-realtime')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'team_kpis' }, async (payload) => {
+                    console.log('📡 KPI 변경:', payload);
+                    await loadKpiFromSupabase();
+                    if (curSub) renderKpiSection();
+                })
+                .subscribe();
+
+            // initiatives 테이블 변경 구독
+            supabaseClient
+                .channel('initiatives-realtime')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'initiatives' }, async (payload) => {
+                    console.log('📡 Initiative 변경:', payload);
+                    if (curSub) {
+                        await loadInitiatives();
+                        renderInitiatives();
+                    }
+                    toast('🔄 데이터가 동기화되었습니다');
+                })
+                .subscribe();
+            
+            console.log('📡 Realtime 구독 시작');
+        }
+
+        // ========== Tasks CRUD ==========
+        
+        // Tasks 로드
+        async function loadTasksFromSupabase() {
+            if (!supabaseClient) return false;
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('tasks')
+                    .select('*')
+                    .order('created_at', { ascending: true });
+                
+                if (error) throw error;
+                
+                // sub_dept_id별로 그룹화
+                taskData = {};
+                data.forEach(task => {
+                    if (!taskData[task.sub_dept_id]) {
+                        taskData[task.sub_dept_id] = [];
+                    }
+                    taskData[task.sub_dept_id].push({
+                        id: task.id,
+                        name: task.name,
+                        assignee: task.assignee,
+                        progress: task.progress,
+                        priority: task.priority,
+                        dueDate: task.due_date,
+                        createdAt: task.created_at,
+                        updatedAt: task.updated_at,
+                        updatedBy: task.updated_by
+                    });
+                });
+                
+                console.log('✅ Tasks 로드 완료:', Object.keys(taskData).length, '개 팀');
+                return true;
+            } catch (err) {
+                console.error('❌ Tasks 로드 실패:', err);
+                return false;
+            }
+        }
+
+        // Task 생성
+        async function createTaskInSupabase(subDeptId, task) {
+            if (!supabaseClient) return null;
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('tasks')
+                    .insert({
+                        sub_dept_id: subDeptId,
+                        name: task.name,
+                        assignee: task.assignee,
+                        progress: task.progress,
+                        priority: task.priority,
+                        due_date: task.dueDate,
+                        created_by: CURRENT_USER,
+                        updated_by: CURRENT_USER
+                    })
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                // Activity log
+                await addActivityLogToSupabase(data.id, task.name, 'create', null, null, null);
+                
+                console.log('✅ Task 생성:', data.name);
+                return data;
+            } catch (err) {
+                console.error('❌ Task 생성 실패:', err);
+                return null;
+            }
+        }
+
+        // Task 업데이트
+        async function updateTaskInSupabase(taskId, updates, oldTask) {
+            if (!supabaseClient) return false;
+            
+            try {
+                const updateData = {
+                    updated_at: new Date().toISOString(),
+                    updated_by: CURRENT_USER
+                };
+                
+                if (updates.name !== undefined) updateData.name = updates.name;
+                if (updates.assignee !== undefined) updateData.assignee = updates.assignee;
+                if (updates.progress !== undefined) updateData.progress = updates.progress;
+                if (updates.priority !== undefined) updateData.priority = updates.priority;
+                if (updates.dueDate !== undefined) updateData.due_date = updates.dueDate;
+                
+                const { error } = await supabaseClient
+                    .from('tasks')
+                    .update(updateData)
+                    .eq('id', taskId);
+                
+                if (error) throw error;
+                
+                // Activity log for each changed field
+                for (const [key, value] of Object.entries(updates)) {
+                    if (oldTask[key] !== value) {
+                        await addActivityLogToSupabase(
+                            taskId, 
+                            oldTask.name, 
+                            'update', 
+                            key, 
+                            String(oldTask[key] || ''), 
+                            String(value || '')
+                        );
+                    }
+                }
+                
+                console.log('✅ Task 업데이트:', taskId);
+                return true;
+            } catch (err) {
+                console.error('❌ Task 업데이트 실패:', err);
+                return false;
+            }
+        }
+
+        // Task 삭제
+        async function deleteTaskInSupabase(taskId, taskName) {
+            if (!supabaseClient) return false;
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('tasks')
+                    .delete()
+                    .eq('id', taskId);
+                
+                if (error) throw error;
+                
+                console.log('✅ Task 삭제:', taskId);
+                return true;
+            } catch (err) {
+                console.error('❌ Task 삭제 실패:', err);
+                return false;
+            }
+        }
+
+        // ========== Activity Logs ==========
+        
+        async function addActivityLogToSupabase(taskId, taskName, action, field, oldValue, newValue) {
+            if (!supabaseClient) return;
+            
+            try {
+                await supabaseClient
+                    .from('activity_logs')
+                    .insert({
+                        task_id: taskId,
+                        task_name: taskName,
+                        action: action,
+                        field: field,
+                        old_value: oldValue,
+                        new_value: newValue,
+                        created_by: CURRENT_USER
+                    });
+            } catch (err) {
+                console.error('Activity log 저장 실패:', err);
+            }
+        }
+
+        async function getActivityLogsFromSupabase(taskId) {
+            if (!supabaseClient) return [];
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('activity_logs')
+                    .select('*')
+                    .eq('task_id', taskId)
+                    .order('created_at', { ascending: false })
+                    .limit(50);
+                
+                if (error) throw error;
+                return data || [];
+            } catch (err) {
+                console.error('Activity logs 로드 실패:', err);
+                return [];
+            }
+        }
+
+        // ========== Team KPIs ==========
+        
+        async function loadKpiFromSupabase() {
+            if (!supabaseClient) return false;
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('team_kpis')
+                    .select('*');
+                
+                if (error) throw error;
+                
+                // sub_dept_id를 키로 하는 객체로 변환
+                kpiData = {};
+                data.forEach(kpi => {
+                    kpiData[kpi.sub_dept_id] = {
+                        id: kpi.id,
+                        mission: kpi.mission,
+                        metrics: kpi.metrics || [],
+                        conditions: kpi.conditions || []
+                    };
+                });
+                
+                console.log('✅ KPI 로드 완료:', Object.keys(kpiData).length, '개 팀');
+                return true;
+            } catch (err) {
+                console.error('❌ KPI 로드 실패:', err);
+                return false;
+            }
+        }
+
+        async function saveKpiToSupabase(subDeptId, kpiInfo) {
+            if (!supabaseClient) return false;
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('team_kpis')
+                    .upsert({
+                        sub_dept_id: subDeptId,
+                        mission: kpiInfo.mission,
+                        metrics: kpiInfo.metrics,
+                        conditions: kpiInfo.conditions,
+                        updated_at: new Date().toISOString(),
+                        updated_by: CURRENT_USER
+                    }, { onConflict: 'sub_dept_id' });
+                
+                if (error) throw error;
+                
+                console.log('✅ KPI 저장:', subDeptId);
+                return true;
+            } catch (err) {
+                console.error('❌ KPI 저장 실패:', err);
+                return false;
+            }
+        }
+
+        // ========== 초기 더미 데이터 삽입 ==========
+        
+        async function insertDummyDataToSupabase() {
+            if (!supabaseClient) return;
+            
+            const dummyData = generateDummyData();
+            
+            for (const [subDeptId, tasks] of Object.entries(dummyData)) {
+                for (const task of tasks) {
+                    await supabaseClient.from('tasks').insert({
+                        sub_dept_id: subDeptId,
+                        name: task.name,
+                        assignee: task.assignee,
+                        progress: task.progress,
+                        priority: task.priority,
+                        due_date: task.dueDate,
+                        created_by: task.updatedBy,
+                        updated_by: task.updatedBy
+                    });
+                }
+            }
+            
+            // 그로스팀 KPI 삽입
+            await supabaseClient.from('team_kpis').insert({
+                sub_dept_id: 'growth',
+                mission: '그로스팀은 전사 운영과 성과를 구조적으로 관리하며, 성장을 위해 필요한 기능·서비스·협업 모델을 기획에 그치지 않고 실제로 구현하는 팀입니다.',
+                metrics: [
+                    { label: '이니셔티브 완료 수', value: '12', unit: '건', period: '연간' },
+                    { label: '진행 중 이니셔티브', value: '2~4', unit: '건', period: '' },
+                    { label: '운영 지속률', value: '80', unit: '%↑', period: '' }
+                ],
+                conditions: [
+                    '회사의 성장(매출·운영·조직·경영)에 실질적 영향을 주는 문제일 것',
+                    '단순 요청이 아니라 구조·방식·수단을 바꿔야 해결되는 문제일 것',
+                    '그로스팀이 문제 정의부터 해결 구조 설계, 실행 결과물까지 책임질 것',
+                    '결과가 재사용 가능하거나, 다음 성과로 이어질 구조를 남길 것'
+                ],
+                updated_by: '김범석 매니저'
+            });
+            
+            console.log('✅ 더미 데이터 삽입 완료');
+        }
+
+        // ========== 전역 상태 ==========
+        const CURRENT_USER = '김범석 매니저'; // 현재 로그인 사용자
+        const GOAL_TARGET = 80; // 목표 진척률
+
+        // 활동 로그
+        let activityLogs = [];
+
+        // 마지막 업데이트 시간
+        let lastUpdateTime = new Date();
+
+        const ORG = {
+            departments: [
+                {
+                    id: 'sales', name: '영업본부', color: 'blue',
+                    leader: '황윤선 상무이사', headcount: 10,
+                    subDepts: [
+                        { id: 'sales_1', name: '서비스운영 1팀', members: ['한준엽 리드매니저', '조재연 매니저', '정정훈 매니저', '김성민 매니저', '한지혜 매니저'] },
+                        { id: 'sales_2', name: '서비스운영 2팀', members: ['권정아 리드매니저', '김수진 매니저'] },
+                        { id: 'sales_3', name: '서비스운영 3팀', members: ['주현진 리드매니저', '송보람 매니저'] },
+                        { id: 'sales_team', name: '영업팀', members: ['이필선 매니저'] }
+                    ]
+                },
+                {
+                    id: 'design', name: '설계/적산팀', color: 'purple',
+                    leader: '조현식 이사', headcount: 3,
+                    subDepts: [
+                        { id: 'est_team', name: '적산팀', members: ['김영섭 리드매니저', '신수진 매니저'] },
+                        { id: 'apt_square', name: '아파트스퀘어팀', members: ['한인규 리드매니저'] }
+                    ]
+                },
+                {
+                    id: 'mgmt', name: '경영관리본부', color: 'orange',
+                    leader: '백정석 이사', headcount: 6,
+                    subDepts: [
+                        { id: 'mgmt_team', name: '경영관리팀', members: ['신나영 리드매니저', '주유진 매니저', '최경옥 매니저', '김유림 매니저'] },
+                        { id: 'growth', name: '그로스팀', members: ['이재훈 리드매니저', '김범석 매니저'] }
+                    ]
+                },
+                {
+                    id: 'brand', name: '브랜드마케팅팀', color: 'pink',
+                    leader: '권혜영 리드매니저', headcount: 3,
+                    subDepts: [
+                        { id: 'brand_team', name: '브랜드마케팅팀', members: ['권혜영 리드매니저', '함지민 매니저', '김소라 매니저'] }
+                    ]
+                },
+                {
+                    id: 'commerce', name: '커머스사업본부', color: 'cyan',
+                    leader: '허지윤 리드매니저', headcount: 8,
+                    subDepts: [
+                        { id: 'brand_comm', name: '브랜드커머스팀', members: ['이란 매니저'] },
+                        { id: 'media_comm', name: '미디어커머스팀', members: ['방현수 리드매니저', '김소연 매니저', '남윤정 매니저'] },
+                        { id: 'overseas', name: '해외사업팀', members: ['김채원 매니저', '쩐티리 매니저'] },
+                        { id: 'moyeora', name: '모여라딜팀', members: ['김송희 리드매니저', '이채은 매니저'] }
+                    ]
+                },
+                {
+                    id: 'rnd', name: '기술연구소', color: 'purple',
+                    leader: '정영재 기술연구소장', headcount: 3,
+                    subDepts: [
+                        { id: 'rnd_team', name: '기술연구소', members: ['신명희 선임연구원', '심혜진 연구원', '김소정 연구원'] }
+                    ]
+                },
+                {
+                    id: 'factory', name: '용인공장', color: 'green',
+                    leader: '김성준 공장장', headcount: 3,
+                    subDepts: [
+                        { id: 'factory_admin', name: '관리팀', members: ['이나라 매니저'] },
+                        { id: 'factory_prod', name: '생산/품질관리팀', members: ['이재민 리드매니저', '김유진 매니저'] }
+                    ]
+                }
+            ]
+        };
+
+        let taskData = {};
+        let kpiData = {}; // KPI 데이터 저장
+        let curDept = null, curSub = null, editIdx = null;
+        let barChart = null, donutChart = null;
+        let isPresentationMode = false;
+
+        // 그로스팀 기본 KPI 데이터
+        const DEFAULT_KPI_DATA = {
+            'growth': {
+                mission: '그로스팀은 전사 운영과 성과를 구조적으로 관리하며, 성장을 위해 필요한 기능·서비스·협업 모델을 기획에 그치지 않고 실제로 구현하는 팀입니다.',
+                metrics: [
+                    { label: '이니셔티브 완료 수', value: '12', unit: '건', period: '연간' },
+                    { label: '진행 중 이니셔티브', value: '2~4', unit: '건', period: '' },
+                    { label: '운영 지속률', value: '80', unit: '%↑', period: '' }
+                ],
+                conditions: [
+                    '회사의 성장(매출·운영·조직·경영)에 실질적 영향을 주는 문제일 것',
+                    '단순 요청이 아니라 구조·방식·수단을 바꿔야 해결되는 문제일 것',
+                    '그로스팀이 문제 정의부터 해결 구조 설계, 실행 결과물까지 책임질 것',
+                    '결과가 재사용 가능하거나, 다음 성과로 이어질 구조를 남길 것'
+                ]
+            }
+        };
+
+        // 더미 데이터 생성 (확장된 구조)
+        function generateDummyData() {
+            const now = new Date().toISOString();
+            return {
+                'sales_1': [
+                    { name: '1분기 영업 목표 수립', assignee: '한준엽 리드매니저', progress: 100, priority: 'high', dueDate: '2026-01-15', createdAt: now, updatedAt: now, updatedBy: '한준엽 리드매니저' },
+                    { name: '신규 거래처 발굴', assignee: '조재연 매니저', progress: 80, priority: 'high', dueDate: '2026-01-20', createdAt: now, updatedAt: now, updatedBy: '조재연 매니저' },
+                    { name: '기존 고객 유지 관리', assignee: '정정훈 매니저', progress: 70, priority: 'medium', dueDate: '2026-01-25', createdAt: now, updatedAt: now, updatedBy: '정정훈 매니저' },
+                    { name: '영업 실적 보고서 작성', assignee: '김성민 매니저', progress: 90, priority: 'medium', dueDate: '2026-01-10', createdAt: now, updatedAt: now, updatedBy: '김성민 매니저' },
+                    { name: '고객 만족도 조사', assignee: '한지혜 매니저', progress: 60, priority: 'low', dueDate: '2026-01-30', createdAt: now, updatedAt: now, updatedBy: '한지혜 매니저' }
+                ],
+                'sales_2': [
+                    { name: '서비스 운영 매뉴얼 정비', assignee: '권정아 리드매니저', progress: 100, priority: 'high', dueDate: '2026-01-08', createdAt: now, updatedAt: now, updatedBy: '권정아 리드매니저' },
+                    { name: '고객 응대 프로세스 개선', assignee: '김수진 매니저', progress: 85, priority: 'medium', dueDate: '2026-01-18', createdAt: now, updatedAt: now, updatedBy: '김수진 매니저' }
+                ],
+                'sales_3': [
+                    { name: 'CS 응대 시스템 구축', assignee: '주현진 리드매니저', progress: 75, priority: 'high', dueDate: '2026-01-22', createdAt: now, updatedAt: now, updatedBy: '주현진 리드매니저' },
+                    { name: '불만 고객 케어 프로그램', assignee: '송보람 매니저', progress: 20, priority: 'medium', dueDate: '2026-01-28', createdAt: now, updatedAt: now, updatedBy: '송보람 매니저' }
+                ],
+                'sales_team': [
+                    { name: '신규 계약 10건 달성', assignee: '이필선 매니저', progress: 25, priority: 'high', dueDate: '2026-01-31', createdAt: now, updatedAt: now, updatedBy: '이필선 매니저' }
+                ],
+                'est_team': [
+                    { name: '적산 시스템 고도화', assignee: '김영섭 리드매니저', progress: 90, priority: 'high', dueDate: '2026-01-20', createdAt: now, updatedAt: now, updatedBy: '김영섭 리드매니저' },
+                    { name: '원가 분석 리포트', assignee: '신수진 매니저', progress: 70, priority: 'medium', dueDate: '2026-01-15', createdAt: now, updatedAt: now, updatedBy: '신수진 매니저' }
+                ],
+                'apt_square': [
+                    { name: '아파트스퀘어 2.0 기획', assignee: '한인규 리드매니저', progress: 65, priority: 'high', dueDate: '2026-02-01', createdAt: now, updatedAt: now, updatedBy: '한인규 리드매니저' }
+                ],
+                'mgmt_team': [
+                    { name: '2026 예산 편성', assignee: '신나영 리드매니저', progress: 100, priority: 'high', dueDate: '2026-01-05', createdAt: now, updatedAt: now, updatedBy: '신나영 리드매니저' },
+                    { name: '분기별 재무제표 작성', assignee: '주유진 매니저', progress: 80, priority: 'high', dueDate: '2026-01-10', createdAt: now, updatedAt: now, updatedBy: '주유진 매니저' },
+                    { name: '인사 평가 시스템 개선', assignee: '최경옥 매니저', progress: 60, priority: 'medium', dueDate: '2026-01-25', createdAt: now, updatedAt: now, updatedBy: '최경옥 매니저' },
+                    { name: '복리후생 프로그램 기획', assignee: '김유림 매니저', progress: 45, priority: 'low', dueDate: '2026-02-15', createdAt: now, updatedAt: now, updatedBy: '김유림 매니저' }
+                ],
+                'growth': [
+                    { name: 'KPI 대시보드 개발', assignee: '이재훈 리드매니저', progress: 95, priority: 'high', dueDate: '2026-01-05', createdAt: now, updatedAt: now, updatedBy: '이재훈 리드매니저' },
+                    { name: '데이터 분석 자동화', assignee: '김범석 매니저', progress: 85, priority: 'high', dueDate: '2026-01-15', createdAt: now, updatedAt: now, updatedBy: '김범석 매니저' }
+                ],
+                'brand_team': [
+                    { name: '브랜드 리뉴얼 프로젝트', assignee: '권혜영 리드매니저', progress: 70, priority: 'high', dueDate: '2026-02-01', createdAt: now, updatedAt: now, updatedBy: '권혜영 리드매니저' },
+                    { name: 'SNS 콘텐츠 기획', assignee: '함지민 매니저', progress: 80, priority: 'medium', dueDate: '2026-01-20', createdAt: now, updatedAt: now, updatedBy: '함지민 매니저' },
+                    { name: '보도자료 배포', assignee: '김소라 매니저', progress: 100, priority: 'medium', dueDate: '2026-01-08', createdAt: now, updatedAt: now, updatedBy: '김소라 매니저' }
+                ],
+                'brand_comm': [
+                    { name: '브랜드 커머스 전략 수립', assignee: '이란 매니저', progress: 60, priority: 'high', dueDate: '2026-01-25', createdAt: now, updatedAt: now, updatedBy: '이란 매니저' }
+                ],
+                'media_comm': [
+                    { name: '라이브커머스 운영', assignee: '방현수 리드매니저', progress: 90, priority: 'high', dueDate: '2026-01-15', createdAt: now, updatedAt: now, updatedBy: '방현수 리드매니저' },
+                    { name: '인플루언서 협업', assignee: '김소연 매니저', progress: 75, priority: 'medium', dueDate: '2026-01-22', createdAt: now, updatedAt: now, updatedBy: '김소연 매니저' },
+                    { name: '광고 성과 분석', assignee: '남윤정 매니저', progress: 85, priority: 'medium', dueDate: '2026-01-18', createdAt: now, updatedAt: now, updatedBy: '남윤정 매니저' }
+                ],
+                'overseas': [
+                    { name: '해외 시장 조사', assignee: '김채원 매니저', progress: 50, priority: 'high', dueDate: '2026-02-01', createdAt: now, updatedAt: now, updatedBy: '김채원 매니저' },
+                    { name: '현지 파트너십 구축', assignee: '쩐티리 매니저', progress: 15, priority: 'medium', dueDate: '2026-03-01', createdAt: now, updatedAt: now, updatedBy: '쩐티리 매니저' }
+                ],
+                'moyeora': [
+                    { name: '모여라딜 플랫폼 개선', assignee: '김송희 리드매니저', progress: 80, priority: 'high', dueDate: '2026-01-20', createdAt: now, updatedAt: now, updatedBy: '김송희 리드매니저' },
+                    { name: '딜 상품 소싱', assignee: '이채은 매니저', progress: 70, priority: 'medium', dueDate: '2026-01-25', createdAt: now, updatedAt: now, updatedBy: '이채은 매니저' }
+                ],
+                'rnd_team': [
+                    { name: 'AI 결함 진단 모델 개발', assignee: '신명희 선임연구원', progress: 85, priority: 'high', dueDate: '2026-02-15', createdAt: now, updatedAt: now, updatedBy: '신명희 선임연구원' },
+                    { name: '특허 출원 준비', assignee: '심혜진 연구원', progress: 60, priority: 'high', dueDate: '2026-01-31', createdAt: now, updatedAt: now, updatedBy: '심혜진 연구원' },
+                    { name: '신기술 리서치', assignee: '김소정 연구원', progress: 40, priority: 'low', dueDate: '2026-02-28', createdAt: now, updatedAt: now, updatedBy: '김소정 연구원' }
+                ],
+                'factory_admin': [
+                    { name: '공장 운영 효율화', assignee: '이나라 매니저', progress: 75, priority: 'medium', dueDate: '2026-01-25', createdAt: now, updatedAt: now, updatedBy: '이나라 매니저' }
+                ],
+                'factory_prod': [
+                    { name: '생산 라인 최적화', assignee: '이재민 리드매니저', progress: 90, priority: 'high', dueDate: '2026-01-18', createdAt: now, updatedAt: now, updatedBy: '이재민 리드매니저' },
+                    { name: '품질 관리 시스템 구축', assignee: '김유진 매니저', progress: 65, priority: 'high', dueDate: '2026-02-01', createdAt: now, updatedAt: now, updatedBy: '김유진 매니저' }
+                ]
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 로딩 표시
+            showLoading(true);
+            
+            try {
+                // Supabase 초기화
+                initSupabase();
+                
+                if (supabaseClient && SupabaseConfig.enabled) {
+                    // Supabase에서 데이터 로드
+                    const tasksLoaded = await loadTasksFromSupabase();
+                    const kpiLoaded = await loadKpiFromSupabase();
+                    
+                    // 데이터 없으면 더미 데이터 삽입
+                    if (tasksLoaded && Object.keys(taskData).length === 0) {
+                        console.log('📝 더미 데이터 삽입 중...');
+                        await insertDummyDataToSupabase();
+                        await loadTasksFromSupabase();
+                        await loadKpiFromSupabase();
+                    }
+                    
+                    // 실시간 구독 시작
+                    subscribeToChanges();
+                } else {
+                    // localStorage 사용 (오프라인 모드)
+                    loadData();
+                    loadKpiData();
+                    if (Object.keys(taskData).length === 0) {
+                        taskData = generateDummyData();
+                        saveData();
+                    }
+                }
+                
+                renderNav();
+                renderDeptGrid();
+                initCharts();
+                calcAll();
+                updateLastUpdateTime();
+                animateProgressBars();
+                animateCountUp();
+                
+                // 자동 새로고침 시작 (30초)
+                startAutoRefresh();
+                addAutoRefreshIndicator();
+                
+                // Initiative 모달 클릭 이벤트
+                document.getElementById('initiativeModal')?.addEventListener('click', e => {
+                    if (e.target.id === 'initiativeModal') closeInitiativeModal();
+                });
+            } catch (err) {
+                console.error('초기화 에러:', err);
+            }
+            
+            showLoading(false);
+        });
+        
+        // 자동 새로고침 표시 추가
+        function addAutoRefreshIndicator() {
+            const indicator = document.createElement('div');
+            indicator.className = 'auto-refresh-indicator';
+            indicator.innerHTML = '<div class="refresh-dot"></div><span>30초마다 자동 새로고침</span>';
+            document.body.appendChild(indicator);
+        }
+        
+        // 로딩 표시 함수
+        function showLoading(show) {
+            let loader = document.getElementById('globalLoader');
+            if (!loader && show) {
+                loader = document.createElement('div');
+                loader.id = 'globalLoader';
+                loader.innerHTML = `
+                    <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;">
+                        <div style="text-align:center;">
+                            <div style="width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
+                            <div style="color:var(--text-secondary);font-size:14px;">데이터 로딩 중...</div>
+                        </div>
+                    </div>
+                    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+                `;
+                document.body.appendChild(loader);
+            }
+            if (loader) {
+                loader.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        const getName = f => f.split(' ')[0];
+        const getAvatar = f => { const n = f.split(' ')[0]; return n.length >= 2 ? n.slice(1) : n; };
+        const getColorClass = p => p < 30 ? 'critical' : p < 50 ? 'low' : '';
+
+        // D-day 계산
+        function getDday(dueDate) {
+            if (!dueDate) return null;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const due = new Date(dueDate);
+            due.setHours(0, 0, 0, 0);
+            const diff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+            return diff;
+        }
+
+        function getDdayText(dueDate) {
+            const diff = getDday(dueDate);
+            if (diff === null) return '';
+            if (diff < 0) return `D+${Math.abs(diff)}`;
+            if (diff === 0) return 'D-Day';
+            return `D-${diff}`;
+        }
+
+        function getDdayClass(dueDate, progress) {
+            if (progress === 100) return 'done';
+            const diff = getDday(dueDate);
+            if (diff === null) return 'normal';
+            if (diff < 0) return 'overdue';
+            if (diff <= 3) return 'urgent';
+            return 'normal';
+        }
+
+        // 마지막 업데이트 시간 표시
+        function updateLastUpdateTime() {
+            lastUpdateTime = new Date();
+            const month = lastUpdateTime.getMonth() + 1;
+            const day = lastUpdateTime.getDate();
+            const hours = lastUpdateTime.getHours();
+            const minutes = lastUpdateTime.getMinutes().toString().padStart(2, '0');
+            document.getElementById('lastUpdateText').textContent =
+                `${month}/${day} ${hours}:${minutes}`;
+        }
+
+        // 활동 로그 추가
+        function addActivityLog(taskId, action, field, oldValue, newValue, taskName) {
+            const log = {
+                id: Date.now(),
+                taskId,
+                taskName,
+                action,
+                field,
+                oldValue,
+                newValue,
+                createdAt: new Date().toISOString(),
+                createdBy: CURRENT_USER
+            };
+            activityLogs.push(log);
+            saveActivityLogs();
+        }
+
+        function saveActivityLogs() {
+            localStorage.setItem('netform_activity_logs_v13', JSON.stringify(activityLogs));
+        }
+
+        function loadActivityLogs() {
+            const saved = localStorage.getItem('netform_activity_logs_v13');
+            if (saved) activityLogs = JSON.parse(saved);
+        }
+
+        // 프레젠테이션 모드
+        function togglePresentation() {
+            isPresentationMode = !isPresentationMode;
+            document.querySelector('.app').classList.toggle('presentation-mode', isPresentationMode);
+            if (isPresentationMode) {
+                toast('📺 프레젠테이션 모드 활성화 (ESC로 종료)');
+            }
+        }
+
+        // 기간 필터
+        function updatePeriod() {
+            const year = document.getElementById('yearFilter').value;
+            const type = document.getElementById('periodType').value;
+            const value = document.getElementById('periodValue').value;
+
+            const periodSelect = document.getElementById('periodValue');
+
+            if (type === 'quarter') {
+                periodSelect.innerHTML = `
+                    <option value="1">1분기</option>
+                    <option value="2">2분기</option>
+                    <option value="3">3분기</option>
+                    <option value="4">4분기</option>
+                `;
+            } else {
+                periodSelect.innerHTML = `
+                    <option value="1">1월</option>
+                    <option value="2">2월</option>
+                    <option value="3">3월</option>
+                    <option value="4">4월</option>
+                    <option value="5">5월</option>
+                    <option value="6">6월</option>
+                    <option value="7">7월</option>
+                    <option value="8">8월</option>
+                    <option value="9">9월</option>
+                    <option value="10">10월</option>
+                    <option value="11">11월</option>
+                    <option value="12">12월</option>
+                `;
+            }
+
+            const periodLabel = type === 'quarter'
+                ? `${year}년 ${value}분기 기준`
+                : `${year}년 ${value}월 기준`;
+            document.getElementById('periodLabel').textContent = periodLabel;
+        }
+
+        // 알림 배지가 있는 부서 확인
+        function getDeptAlertStatus(deptId) {
+            const st = getDeptStats(deptId);
+            return st.avg < 30;
+        }
+
+        function renderNav() {
+            document.getElementById('navDepts').innerHTML = ORG.departments.map(d => {
+                const hasAlert = getDeptAlertStatus(d.id);
+                return `
+                    <div class="nav-item" onclick="showDetail('${d.id}')">
+                        <span>${d.name}</span>
+                        ${hasAlert ? '<span class="alert-badge">!</span>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderDeptGrid() {
+            document.getElementById('deptGrid').innerHTML = ORG.departments.map(d => {
+                const st = getDeptStats(d.id);
+                const c = getColorClass(st.avg);
+                const isAlert = st.avg < 30;
+                const lastUpdater = getLastUpdaterForDept(d.id);
+                return `
+                    <div class="dept-card ${isAlert ? 'critical-alert' : ''}" onclick="showDetail('${d.id}')">
+                        <div class="dept-header">
+                            <div>
+                                <div class="dept-name">${d.name}</div>
+                                <div class="dept-leader">${d.leader}</div>
+                                ${lastUpdater ? `<div class="dept-updated-by">✏️ ${getName(lastUpdater)} 수정</div>` : ''}
+                            </div>
+                            <div class="dept-pct ${c}">${st.avg}%</div>
+                        </div>
+                        <div class="dept-bar">
+                            <div class="dept-bar-fill ${c}" data-progress="${st.avg}"></div>
+                        </div>
+                        <div class="dept-meta">${st.count}건 · ${d.headcount}명</div>
+                    </div>
+                `;
+            }).join('');
+
+            // 애니메이션 적용
+            setTimeout(animateProgressBars, 100);
+        }
+
+        // 부서의 마지막 수정자 찾기
+        function getLastUpdaterForDept(deptId) {
+            const d = ORG.departments.find(x => x.id === deptId);
+            if (!d) return null;
+
+            let lastTask = null;
+            let lastTime = null;
+
+            d.subDepts.forEach(s => {
+                (taskData[s.id] || []).forEach(t => {
+                    if (t.updatedAt) {
+                        const time = new Date(t.updatedAt);
+                        if (!lastTime || time > lastTime) {
+                            lastTime = time;
+                            lastTask = t;
+                        }
+                    }
+                });
+            });
+
+            return lastTask?.updatedBy || null;
+        }
+
+        // 프로그레스 바 애니메이션
+        function animateProgressBars() {
+            document.querySelectorAll('.dept-bar-fill').forEach(bar => {
+                const progress = bar.dataset.progress;
+                setTimeout(() => {
+                    bar.style.width = progress + '%';
+                }, 50);
+            });
+        }
+
+        // 숫자 카운트업 애니메이션
+        function animateCountUp() {
+            const elements = [
+                { id: 'statProgress', suffix: '%' },
+                { id: 'statDone', suffix: '' },
+                { id: 'statTotal', suffix: '' },
+                { id: 'statMembers', suffix: '' }
+            ];
+
+            elements.forEach(({ id, suffix }) => {
+                const el = document.getElementById(id);
+                const finalValue = parseInt(el.textContent);
+                if (isNaN(finalValue)) return;
+
+                let current = 0;
+                const increment = finalValue / 30;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= finalValue) {
+                        current = finalValue;
+                        clearInterval(timer);
+                    }
+                    el.textContent = Math.round(current) + suffix;
+                }, 30);
+            });
+        }
+
+        function getDeptStats(deptId) {
+            const d = ORG.departments.find(x => x.id === deptId);
+            if (!d) return { avg: 0, count: 0, members: 0 };
+            let total = 0, count = 0;
+            const ms = new Set();
+            d.subDepts.forEach(s => {
+                (taskData[s.id] || []).forEach(t => {
+                    total += t.progress;
+                    count++;
+                    if (t.assignee) ms.add(t.assignee);
+                });
+            });
+            return { avg: count ? Math.round(total / count) : 0, count, members: ms.size };
+        }
+
+        function calcAll() {
+            let tp = 0, tt = 0, ct = 0;
+            const am = new Set();
+            const deptData = [];
+            const memberStats = {};
+
+            ORG.departments.forEach(d => {
+                let dt = 0, dc = 0;
+                d.subDepts.forEach(s => {
+                    (taskData[s.id] || []).forEach(t => {
+                        dt += t.progress; dc++; tt++; tp += t.progress;
+                        if (t.progress === 100) ct++;
+                        if (t.assignee) {
+                            am.add(t.assignee);
+                            if (!memberStats[t.assignee]) memberStats[t.assignee] = { name: t.assignee, dept: d.name, total: 0, count: 0 };
+                            memberStats[t.assignee].total += t.progress;
+                            memberStats[t.assignee].count++;
+                        }
+                    });
+                });
+                deptData.push(dc ? Math.round(dt / dc) : 0);
+            });
+
+            const avg = tt ? Math.round(tp / tt) : 0;
+
+            document.getElementById('statProgress').textContent = avg + '%';
+            document.getElementById('statDone').textContent = ct;
+            document.getElementById('statTotal').textContent = tt;
+            document.getElementById('statMembers').textContent = am.size;
+
+            document.getElementById('donutPct').textContent = (tt ? Math.round(ct / tt * 100) : 0) + '%';
+            document.getElementById('dsDone').textContent = ct;
+            document.getElementById('dsPending').textContent = tt - ct;
+
+            // 상단 슬로건 바 업데이트
+            const goalRatio = Math.min((avg / GOAL_TARGET) * 100, 100);
+            document.getElementById('topCurrentPct').textContent = avg + '%';
+            document.getElementById('topProgressFill').style.width = goalRatio + '%';
+            document.getElementById('topProgressText').textContent = goalRatio.toFixed(1) + '% 달성';
+
+            if (barChart) { barChart.data.datasets[0].data = deptData; barChart.update(); }
+            if (donutChart) { donutChart.data.datasets[0].data = [ct, tt - ct]; donutChart.update(); }
+
+            renderDeptGrid();
+            renderNav();
+        }
+
+        function renderWinners(stats) {
+            const el = document.getElementById('winnersGrid');
+            if (!el) return; // 요소가 없으면 종료
+            
+            const list = Object.values(stats);
+            list.forEach(m => m.avg = m.count ? Math.round(m.total / m.count) : 0);
+            list.sort((a, b) => b.avg - a.avg);
+            const top3 = list.slice(0, 3);
+
+            if (top3.length < 3) {
+                el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-text">업무를 등록하면 표시됩니다</div></div>';
+                return;
+            }
+
+            const ranks = ['gold', 'silver', 'bronze'];
+            el.innerHTML = top3.map((m, i) => `
+                <div class="winner-card ${ranks[i]}">
+                    <div class="winner-rank">${i + 1}</div>
+                    <div class="winner-avatar">${getAvatar(m.name)}</div>
+                    <div class="winner-name">${getName(m.name)}</div>
+                    <div class="winner-dept">${m.dept}</div>
+                    <div class="winner-score">${m.avg}%</div>
+                    <div class="winner-score-label">평균 진척률</div>
+                </div>
+            `).join('');
+        }
+
+        function initCharts() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? '#2a2a2a' : '#f2f4f6';
+            const textColor = isDark ? '#b0b8c1' : '#4e5968';
+
+            barChart = new Chart(document.getElementById('barChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ORG.departments.map(d => d.name.replace('본부', '').replace('팀', '').replace('기술연구소', '연구소')),
+                    datasets: [{ data: [0,0,0,0,0,0,0], backgroundColor: '#3182f6', borderRadius: 6, barThickness: 32 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#191f28',
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return '진척률: ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%', color: textColor }, grid: { color: gridColor } },
+                        x: { grid: { display: false }, ticks: { font: { size: 12 }, color: textColor } }
+                    }
+                }
+            });
+
+            donutChart = new Chart(document.getElementById('donutChart').getContext('2d'), {
+                type: 'doughnut',
+                data: { datasets: [{ data: [0, 100], backgroundColor: ['#3182f6', isDark ? '#2a2a2a' : '#e5e8eb'], borderWidth: 0 }] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#191f28',
+                            callbacks: {
+                                label: function(context) {
+                                    const labels = ['완료', '진행중'];
+                                    return labels[context.dataIndex] + ': ' + context.raw + '건';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function goMain() {
+            document.getElementById('mainPage').classList.add('active');
+            document.getElementById('detailPage').classList.remove('active');
+            document.querySelectorAll('.nav-item').forEach((el, i) => el.classList.toggle('active', i === 0));
+            curDept = curSub = null;
+            calcAll();
+        }
+
+        async function showDetail(deptId, subId = null) {
+            const d = ORG.departments.find(x => x.id === deptId);
+            if (!d) return;
+            curDept = deptId; curSub = subId || d.subDepts[0]?.id;
+
+            document.getElementById('mainPage').classList.remove('active');
+            document.getElementById('detailPage').classList.add('active');
+            document.getElementById('detailTitle').textContent = d.name;
+            document.getElementById('detailSubtitle').textContent = d.leader;
+
+            const st = getDeptStats(deptId);
+            document.getElementById('detailProgress').textContent = st.avg + '%';
+            document.getElementById('detailTasks').textContent = st.count;
+            document.getElementById('detailMembers').textContent = st.members;
+
+            document.querySelectorAll('.nav-item').forEach((el, i) => el.classList.toggle('active', i === ORG.departments.findIndex(x => x.id === deptId) + 1));
+
+            renderTabs(d); 
+            renderKpiSection(); 
+            await loadAndRenderInitiatives();
+        }
+
+        // Initiative 로드 및 렌더링
+        async function loadAndRenderInitiatives() {
+            // 팀별 텍스트 설정
+            updateSectionLabels();
+            
+            if (supabaseClient && curSub) {
+                await loadInitiatives();
+                renderInitiatives();
+            }
+        }
+
+        // 팀별 섹션 라벨 업데이트
+        function updateSectionLabels() {
+            const isGrowth = curSub === 'growth';
+            const title = isGrowth ? '📋 Initiative 현황' : '🎯 핵심 과제 현황';
+            const addBtn = isGrowth ? '+ Initiative 추가' : '+ 핵심 과제 추가';
+            const nameLabel = isGrowth ? 'Initiative 이름 *' : '과제명 *';
+            
+            document.getElementById('initSectionTitle').textContent = title;
+            document.getElementById('initAddBtn').textContent = addBtn;
+            document.getElementById('initNameLabel').textContent = nameLabel;
+        }
+
+        // 용어 가져오기 (그로스팀 vs 다른팀)
+        function getTermLabel(type) {
+            const isGrowth = curSub === 'growth';
+            const terms = {
+                title: isGrowth ? 'Initiative' : '핵심 과제',
+                add: isGrowth ? 'Initiative 추가' : '핵심 과제 추가',
+                edit: isGrowth ? 'Initiative 수정' : '핵심 과제 수정',
+                name: isGrowth ? 'Initiative 이름' : '과제명',
+                empty: isGrowth ? 'Initiative가' : '핵심 과제가'
+            };
+            return terms[type] || terms.title;
+        }
+
+        function renderTabs(d) {
+            document.getElementById('tabs').innerHTML = d.subDepts.map(s =>
+                `<button class="tab ${s.id === curSub ? 'active' : ''}" onclick="switchSub('${s.id}', this)">${s.name}</button>`
+            ).join('');
+        }
+
+        async function switchSub(subId, el) {
+            curSub = subId;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            renderKpiSection(); 
+            await loadAndRenderInitiatives();
+        }
+
+        function renderMembers(deptId) {
+            const d = ORG.departments.find(x => x.id === deptId);
+            const currentSub = d.subDepts.find(s => s.id === curSub);
+            if (!currentSub) return;
+
+            const stats = {};
+            currentSub.members.forEach(m => { stats[m] = { name: m, sub: currentSub.name, total: 0, count: 0 }; });
+            (taskData[curSub] || []).forEach(t => {
+                if (t.assignee && stats[t.assignee]) {
+                    stats[t.assignee].total += t.progress;
+                    stats[t.assignee].count++;
+                }
+            });
+
+            const list = Object.values(stats);
+            list.forEach(m => m.avg = m.count ? Math.round(m.total / m.count) : 0);
+
+            document.getElementById('memberGrid').innerHTML = list.length ? list.map(m => `
+                <div class="member-card" onclick="showModal('${m.name}','${deptId}')">
+                    <div class="member-avatar">${getAvatar(m.name)}</div>
+                    <div class="member-info">
+                        <div class="member-name">${getName(m.name)}</div>
+                        <div class="member-role">${m.sub}</div>
+                    </div>
+                    <div class="member-right">
+                        <div class="member-pct">${m.count ? m.avg + '%' : '-'}</div>
+                        <div class="member-cnt">${m.count}건</div>
+                    </div>
+                </div>
+            `).join('') : '<div class="empty-state" style="grid-column:1/-1"><div class="empty-text">팀원이 없습니다</div></div>';
+        }
+
+        function showModal(name, deptId) {
+            const d = ORG.departments.find(x => x.id === deptId);
+            const tasks = [];
+            ORG.departments.forEach(dept => dept.subDepts.forEach(s => (taskData[s.id] || []).forEach(t => { if (t.assignee === name) tasks.push({ ...t, sub: s.name }); })));
+
+            const total = tasks.reduce((sum, t) => sum + t.progress, 0);
+            const avg = tasks.length ? Math.round(total / tasks.length) : 0;
+
+            document.getElementById('modalAvatar').textContent = getAvatar(name);
+            document.getElementById('modalName').textContent = getName(name);
+            document.getElementById('modalDept').textContent = d.name;
+            document.getElementById('modalProgress').textContent = avg + '%';
+            document.getElementById('modalTasks').textContent = tasks.length;
+            document.getElementById('modalDone').textContent = tasks.filter(t => t.progress === 100).length;
+            document.getElementById('modalBody').innerHTML = tasks.length ? tasks.map(t => `
+                <div class="modal-task">
+                    <div><div class="modal-task-name">${t.name}</div><div class="modal-task-sub">${t.sub}</div></div>
+                    <div class="modal-task-pct">${t.progress}%</div>
+                </div>
+            `).join('') : '<div class="empty-state"><div class="empty-text">담당 업무가 없습니다</div></div>';
+
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function closeModal() { document.getElementById('modal').classList.remove('show'); }
+        document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+        // 변경 이력 모달
+        function showHistoryModal(taskIndex) {
+            const task = taskData[curSub]?.[taskIndex];
+            if (!task) return;
+
+            const taskId = `${curSub}_${taskIndex}`;
+            const logs = activityLogs.filter(log => log.taskId === taskId);
+
+            document.getElementById('historyTaskName').textContent = task.name;
+            document.getElementById('historyBody').innerHTML = logs.length ? logs.reverse().map(log => {
+                const date = new Date(log.createdAt);
+                const dateStr = `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2,'0')}`;
+                return `
+                    <div class="history-item">
+                        <div class="history-item-header">
+                            <span class="history-action">${log.action}</span>
+                            <span class="history-date">${dateStr}</span>
+                        </div>
+                        ${log.field ? `<div class="history-detail">${log.field}: ${log.oldValue || '-'} → ${log.newValue || '-'}</div>` : ''}
+                        <div class="history-by">${log.createdBy}</div>
+                    </div>
+                `;
+            }).join('') : '<div class="empty-state"><div class="empty-text">변경 이력이 없습니다</div></div>';
+
+            document.getElementById('historyModal').classList.add('show');
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('historyModal').classList.remove('show');
+        }
+
+        document.getElementById('historyModal').addEventListener('click', e => {
+            if (e.target.id === 'historyModal') closeHistoryModal();
+        });
+
+        function renderTasks() {
+            if (!curSub) return;
+            const tasks = taskData[curSub] || [];
+            updateAssignees();
+
+            const d = ORG.departments.find(x => x.id === curDept);
+            const s = d?.subDepts.find(x => x.id === curSub);
+            const members = s?.members || [];
+
+            document.getElementById('taskList').innerHTML = tasks.length ? tasks.map((t, i) => {
+                const isEdit = editIdx === i;
+                const ddayText = getDdayText(t.dueDate);
+                const ddayClass = getDdayClass(t.dueDate, t.progress);
+                const hasPriority = t.priority && t.priority !== '';
+                return `
+                    <div class="task-item ${hasPriority ? 'has-priority' : ''}">
+                        ${hasPriority ? `<div class="priority-bar ${t.priority}"></div>` : ''}
+                        <div class="task-name">
+                            <span class="${isEdit ? 'hide' : ''}">${t.name}</span>
+                            <input type="text" class="${isEdit ? 'show' : ''}" value="${t.name}" id="editInput_${i}" onkeypress="if(event.key==='Enter')saveEdit(${i})">
+                        </div>
+                        ${ddayText ? `<span class="task-dday ${ddayClass}">${ddayText}</span>` : ''}
+                        ${t.updatedBy ? `<span class="task-updated-by">${getName(t.updatedBy)} 수정</span>` : ''}
+                        <select class="task-select" onchange="updateTask(${i},'assignee',this.value)">
+                            <option value="">담당자</option>
+                            ${members.map(m => `<option value="${m}" ${t.assignee===m?'selected':''}>${getName(m)}</option>`).join('')}
+                        </select>
+                        <select class="task-select" onchange="updateTask(${i},'progress',this.value)">
+                            ${[0,10,20,30,40,50,60,70,80,90,100].map(p => `<option value="${p}" ${t.progress===p?'selected':''}>${p}%</option>`).join('')}
+                        </select>
+                        <select class="task-select" onchange="updateTask(${i},'priority',this.value)">
+                            <option value="" ${!t.priority?'selected':''}>우선순위</option>
+                            <option value="high" ${t.priority==='high'?'selected':''}>상</option>
+                            <option value="medium" ${t.priority==='medium'?'selected':''}>중</option>
+                            <option value="low" ${t.priority==='low'?'selected':''}>하</option>
+                        </select>
+                        <input type="date" class="task-select" value="${t.dueDate || ''}" onchange="updateTask(${i},'dueDate',this.value)" style="width:140px">
+                        <div class="task-actions">
+                            ${isEdit ? `
+                                <button class="btn-xs btn-edit" onclick="saveEdit(${i})">저장</button>
+                                <button class="btn-xs btn-del" onclick="cancelEdit()">취소</button>
+                            ` : `
+                                <button class="btn-xs btn-edit" onclick="startEdit(${i})">수정</button>
+                                <button class="btn-xs btn-history" onclick="showHistoryModal(${i})">이력</button>
+                                <button class="btn-xs btn-del" onclick="deleteTask(${i})">삭제</button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('') : '<div class="empty-state"><div class="empty-text">등록된 업무가 없습니다</div></div>';
+        }
+
+        function updateAssignees() {
+            const d = ORG.departments.find(x => x.id === curDept);
+            const s = d?.subDepts.find(x => x.id === curSub);
+            const sel = document.getElementById('newAssignee');
+            if (sel) sel.innerHTML = '<option value="">담당자</option>' + (s?.members || []).map(m => `<option value="${m}">${getName(m)}</option>`).join('');
+        }
+
+        function showTaskForm() { document.getElementById('taskForm').classList.add('show'); document.getElementById('newName').focus(); }
+        function hideTaskForm() {
+            document.getElementById('taskForm').classList.remove('show');
+            document.getElementById('newName').value = '';
+            document.getElementById('newAssignee').value = '';
+            document.getElementById('newProgress').value = '0';
+            document.getElementById('newPriority').value = '';
+            document.getElementById('newDueDate').value = '';
+        }
+
+        async function addTask() {
+            const name = document.getElementById('newName').value.trim();
+            if (!name) return alert('업무명을 입력하세요');
+
+            const newTask = {
+                name,
+                assignee: document.getElementById('newAssignee').value,
+                progress: parseInt(document.getElementById('newProgress').value),
+                priority: document.getElementById('newPriority').value,
+                dueDate: document.getElementById('newDueDate').value
+            };
+
+            if (supabaseClient && SupabaseConfig.enabled) {
+                // Supabase에 저장
+                const result = await createTaskInSupabase(curSub, newTask);
+                if (result) {
+                    await loadTasksFromSupabase();
+                }
+            } else {
+                // localStorage에 저장
+                if (!taskData[curSub]) taskData[curSub] = [];
+                const now = new Date().toISOString();
+                newTask.createdAt = now;
+                newTask.updatedAt = now;
+                newTask.updatedBy = CURRENT_USER;
+                taskData[curSub].push(newTask);
+                saveData();
+            }
+
+            renderTasks();
+            renderMembers(curDept);
+            updateDetail();
+            calcAll();
+            hideTaskForm();
+            updateLastUpdateTime();
+            toast('✅ 업무가 등록되었습니다');
+        }
+
+        async function updateTask(i, field, val) {
+            if (taskData[curSub]?.[i]) {
+                const task = taskData[curSub][i];
+                const oldValue = task[field];
+                const newValue = field === 'progress' ? parseInt(val) : val;
+
+                if (supabaseClient && SupabaseConfig.enabled && task.id) {
+                    // Supabase 업데이트
+                    const updates = { [field]: newValue };
+                    await updateTaskInSupabase(task.id, updates, task);
+                    await loadTasksFromSupabase();
+                } else {
+                    // localStorage 업데이트
+                    task[field] = newValue;
+                    task.updatedAt = new Date().toISOString();
+                    task.updatedBy = CURRENT_USER;
+                    saveData();
+                }
+
+                renderTasks();
+                renderMembers(curDept);
+                updateDetail();
+                calcAll();
+                updateLastUpdateTime();
+            }
+        }
+
+        function startEdit(i) { editIdx = i; renderTasks(); setTimeout(() => { const inp = document.getElementById(`editInput_${i}`); if (inp) { inp.focus(); inp.select(); } }, 50); }
+
+        async function saveEdit(i) {
+            const inp = document.getElementById(`editInput_${i}`);
+            if (inp?.value.trim() && taskData[curSub]?.[i]) {
+                const task = taskData[curSub][i];
+                const oldName = task.name;
+                const newName = inp.value.trim();
+
+                if (supabaseClient && SupabaseConfig.enabled && task.id) {
+                    await updateTaskInSupabase(task.id, { name: newName }, task);
+                    await loadTasksFromSupabase();
+                } else {
+                    task.name = newName;
+                    task.updatedAt = new Date().toISOString();
+                    task.updatedBy = CURRENT_USER;
+                    saveData();
+                }
+
+                updateLastUpdateTime();
+                toast('✏️ 수정되었습니다');
+            }
+            editIdx = null;
+            renderTasks();
+        }
+
+        function cancelEdit() { editIdx = null; renderTasks(); }
+
+        async function deleteTask(i) {
+            if (confirm('삭제하시겠습니까?')) {
+                const task = taskData[curSub][i];
+
+                if (supabaseClient && SupabaseConfig.enabled && task.id) {
+                    await deleteTaskInSupabase(task.id, task.name);
+                    await loadTasksFromSupabase();
+                } else {
+                    taskData[curSub].splice(i, 1);
+                    saveData();
+                }
+
+                renderTasks();
+                renderMembers(curDept);
+                updateDetail();
+                calcAll();
+                updateLastUpdateTime();
+                toast('🗑️ 삭제되었습니다');
+            }
+        }
+
+        function updateDetail() {
+            const st = getDeptStats(curDept);
+            document.getElementById('detailProgress').textContent = st.avg + '%';
+            document.getElementById('detailTasks').textContent = st.count;
+            document.getElementById('detailMembers').textContent = st.members;
+        }
+
+        function saveData() { localStorage.setItem('netform_kpi_v13', JSON.stringify(taskData)); }
+        function loadData() {
+            const saved = localStorage.getItem('netform_kpi_v13');
+            if (saved) taskData = JSON.parse(saved);
+            loadActivityLogs();
+        }
+        function saveAll() { saveData(); updateLastUpdateTime(); toast('✅ 저장되었습니다'); }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify({
+                company: '넷폼알앤디',
+                version: 'v13',
+                date: new Date().toISOString(),
+                tasks: taskData,
+                activityLogs: activityLogs
+            }, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `넷폼알앤디_KPI_${new Date().toISOString().split('T')[0]}.json`; a.click();
+            toast('📤 JSON 내보내기 완료');
+        }
+
+        // 엑셀 다운로드
+        function exportToExcel() {
+            const workbook = XLSX.utils.book_new();
+
+            // 전체 요약 시트
+            const summaryData = [
+                ['넷폼알앤디 KPI 대시보드'],
+                ['생성일시', new Date().toLocaleString('ko-KR')],
+                [''],
+                ['부서명', '리더', '진척률', '업무 수', '인원']
+            ];
+
+            ORG.departments.forEach(d => {
+                const st = getDeptStats(d.id);
+                summaryData.push([d.name, d.leader, st.avg + '%', st.count, d.headcount]);
+            });
+
+            const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+            XLSX.utils.book_append_sheet(workbook, summarySheet, '전체 요약');
+
+            // 부서별 상세 시트
+            ORG.departments.forEach(d => {
+                const sheetData = [
+                    [d.name + ' 업무 현황'],
+                    [''],
+                    ['업무명', '담당자', '진척률', '우선순위', '마감일', '수정자', '수정일시']
+                ];
+
+                d.subDepts.forEach(s => {
+                    (taskData[s.id] || []).forEach(t => {
+                        const priorityMap = { high: '상', medium: '중', low: '하' };
+                        sheetData.push([
+                            t.name,
+                            t.assignee || '-',
+                            t.progress + '%',
+                            priorityMap[t.priority] || '-',
+                            t.dueDate || '-',
+                            t.updatedBy || '-',
+                            t.updatedAt ? new Date(t.updatedAt).toLocaleString('ko-KR') : '-'
+                        ]);
+                    });
+                });
+
+                const sheet = XLSX.utils.aoa_to_sheet(sheetData);
+                const sheetName = d.name.substring(0, 31).replace(/[\/\\?*\[\]]/g, '');
+                XLSX.utils.book_append_sheet(workbook, sheet, sheetName);
+            });
+
+            // 다운로드
+            XLSX.writeFile(workbook, `넷폼알앤디_KPI_${new Date().toISOString().split('T')[0]}.xlsx`);
+            toast('📊 엑셀 다운로드 완료');
+        }
+
+        function toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2500); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                if (isPresentationMode) {
+                    togglePresentation();
+                    return;
+                }
+                if (editIdx !== null) cancelEdit();
+                closeModal();
+                closeHistoryModal();
+                closeKpiModal();
+                hideTaskForm();
+            }
+        });
+
+        // 다크모드 토글
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+
+            updateChartColors();
+        }
+
+        function updateChartColors() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? '#2a2a2a' : '#f2f4f6';
+            const textColor = isDark ? '#b0b8c1' : '#4e5968';
+
+            if (barChart) {
+                barChart.options.scales.y.grid.color = gridColor;
+                barChart.options.scales.y.ticks.color = textColor;
+                barChart.options.scales.x.ticks.color = textColor;
+                barChart.update();
+            }
+
+            if (donutChart) {
+                donutChart.data.datasets[0].backgroundColor = ['#3182f6', isDark ? '#2a2a2a' : '#e5e8eb'];
+                donutChart.update();
+            }
+        }
+
+        // 초기 테마 로드
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        }
+
+        // ========== KPI 관련 함수 ==========
+
+        // KPI 데이터 로드
+        function loadKpiData() {
+            const saved = localStorage.getItem('netform_kpi_data_v13');
+            if (saved) {
+                kpiData = JSON.parse(saved);
+            } else {
+                // 기본 데이터로 초기화
+                kpiData = { ...DEFAULT_KPI_DATA };
+                saveKpiDataToStorage();
+            }
+        }
+
+        // KPI 데이터 저장
+        function saveKpiDataToStorage() {
+            localStorage.setItem('netform_kpi_data_v13', JSON.stringify(kpiData));
+        }
+
+        // KPI 섹션 렌더링
+        function renderKpiSection() {
+            if (!curSub) return;
+
+            const kpi = kpiData[curSub];
+            const contentEl = document.getElementById('kpiContent');
+            const editBtn = document.getElementById('kpiEditBtn');
+
+            // 현재 팀 이름 찾기
+            let teamName = '';
+            ORG.departments.forEach(d => {
+                const sub = d.subDepts.find(s => s.id === curSub);
+                if (sub) teamName = sub.name;
+            });
+
+            if (!kpi || !kpi.mission) {
+                // KPI가 없는 경우
+                editBtn.style.display = 'none';
+                contentEl.innerHTML = `
+                    <div class="kpi-empty">
+                        <div class="kpi-empty-icon">📊</div>
+                        <div class="kpi-empty-text">아직 KPI가 등록되지 않았습니다</div>
+                        <button class="btn-kpi-add" onclick="openKpiModal()">+ KPI 등록하기</button>
+                    </div>
+                `;
+            } else {
+                // KPI가 있는 경우
+                editBtn.style.display = 'block';
+
+                let html = '';
+
+                // 미션 카드 (필수)
+                html += `
+                    <div class="kpi-mission">
+                        <div class="kpi-mission-label">팀 미션</div>
+                        <div class="kpi-mission-text">${kpi.mission}</div>
+                    </div>
+                `;
+
+                // 핵심 지표 (있으면 표시)
+                if (kpi.metrics && kpi.metrics.length > 0) {
+                    html += '<div class="kpi-metrics-grid">';
+                    kpi.metrics.forEach(m => {
+                        html += `
+                            <div class="kpi-metric-card">
+                                <div>
+                                    <span class="kpi-metric-value">${m.value}</span>
+                                    <span class="kpi-metric-unit">${m.unit}</span>
+                                </div>
+                                <div class="kpi-metric-label">${m.label}</div>
+                                ${m.period ? `<div class="kpi-metric-period">${m.period}</div>` : ''}
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+
+                // 조건 리스트 (있으면 표시)
+                if (kpi.conditions && kpi.conditions.length > 0) {
+                    html += `
+                        <div class="kpi-conditions">
+                            <div class="kpi-conditions-title">이니셔티브 선정 조건</div>
+                    `;
+                    kpi.conditions.forEach(c => {
+                        html += `
+                            <div class="kpi-condition-item">
+                                <div class="kpi-condition-bullet"></div>
+                                <div class="kpi-condition-text">${c}</div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+
+                contentEl.innerHTML = html;
+            }
+        }
+
+        // KPI 모달 열기
+        function openKpiModal() {
+            const kpi = kpiData[curSub] || { mission: '', metrics: [], conditions: [] };
+
+            // 팀 이름 찾기
+            let teamName = '';
+            ORG.departments.forEach(d => {
+                const sub = d.subDepts.find(s => s.id === curSub);
+                if (sub) teamName = sub.name;
+            });
+
+            document.getElementById('kpiModalSubtitle').textContent = teamName;
+            document.getElementById('kpiMissionInput').value = kpi.mission || '';
+
+            // 지표 체크박스 및 필드
+            const hasMetrics = kpi.metrics && kpi.metrics.length > 0;
+            document.getElementById('kpiMetricsToggle').checked = hasMetrics;
+            document.getElementById('kpiMetricsItems').classList.toggle('show', hasMetrics);
+            renderMetricFields(kpi.metrics || []);
+
+            // 조건 체크박스 및 필드
+            const hasConditions = kpi.conditions && kpi.conditions.length > 0;
+            document.getElementById('kpiConditionsToggle').checked = hasConditions;
+            document.getElementById('kpiConditionsItems').classList.toggle('show', hasConditions);
+            renderConditionFields(kpi.conditions || []);
+
+            document.getElementById('kpiModal').classList.add('show');
+        }
+
+        // KPI 모달 닫기
+        function closeKpiModal() {
+            document.getElementById('kpiModal').classList.remove('show');
+        }
+
+        // 지표 토글
+        function toggleKpiMetrics() {
+            const checked = document.getElementById('kpiMetricsToggle').checked;
+            document.getElementById('kpiMetricsItems').classList.toggle('show', checked);
+            if (checked && document.getElementById('kpiMetricsList').children.length === 0) {
+                addMetricField();
+            }
+        }
+
+        // 조건 토글
+        function toggleKpiConditions() {
+            const checked = document.getElementById('kpiConditionsToggle').checked;
+            document.getElementById('kpiConditionsItems').classList.toggle('show', checked);
+            if (checked && document.getElementById('kpiConditionsList').children.length === 0) {
+                addConditionField();
+            }
+        }
+
+        // 지표 필드 렌더링
+        function renderMetricFields(metrics) {
+            const container = document.getElementById('kpiMetricsList');
+            container.innerHTML = '';
+            if (metrics.length === 0) {
+                addMetricField();
+            } else {
+                metrics.forEach((m, i) => {
+                    addMetricField(m.label, m.value, m.unit, m.period);
+                });
+            }
+        }
+
+        // 지표 필드 추가
+        function addMetricField(label = '', value = '', unit = '', period = '') {
+            const container = document.getElementById('kpiMetricsList');
+            const div = document.createElement('div');
+            div.className = 'kpi-form-item';
+            div.innerHTML = `
+                <input type="text" placeholder="지표명" value="${label}">
+                <input type="text" class="small" placeholder="값" value="${value}">
+                <input type="text" class="small" placeholder="단위" value="${unit}">
+                <input type="text" class="small" placeholder="기간" value="${period}">
+                <button class="btn-remove-item" onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        // 조건 필드 렌더링
+        function renderConditionFields(conditions) {
+            const container = document.getElementById('kpiConditionsList');
+            container.innerHTML = '';
+            if (conditions.length === 0) {
+                addConditionField();
+            } else {
+                conditions.forEach(c => {
+                    addConditionField(c);
+                });
+            }
+        }
+
+        // 조건 필드 추가
+        function addConditionField(text = '') {
+            const container = document.getElementById('kpiConditionsList');
+            const div = document.createElement('div');
+            div.className = 'kpi-form-condition';
+            div.innerHTML = `
+                <textarea placeholder="조건을 입력하세요...">${text}</textarea>
+                <button class="btn-remove-item" onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        // KPI 데이터 저장
+        async function saveKpiData() {
+            const mission = document.getElementById('kpiMissionInput').value.trim();
+
+            if (!mission) {
+                alert('팀 미션은 필수 입력 항목입니다.');
+                return;
+            }
+
+            // 지표 수집
+            const metrics = [];
+            if (document.getElementById('kpiMetricsToggle').checked) {
+                document.querySelectorAll('#kpiMetricsList .kpi-form-item').forEach(item => {
+                    const inputs = item.querySelectorAll('input');
+                    const label = inputs[0].value.trim();
+                    const value = inputs[1].value.trim();
+                    const unit = inputs[2].value.trim();
+                    const period = inputs[3].value.trim();
+                    if (label && value) {
+                        metrics.push({ label, value, unit, period });
+                    }
+                });
+            }
+
+            // 조건 수집
+            const conditions = [];
+            if (document.getElementById('kpiConditionsToggle').checked) {
+                document.querySelectorAll('#kpiConditionsList textarea').forEach(ta => {
+                    const text = ta.value.trim();
+                    if (text) {
+                        conditions.push(text);
+                    }
+                });
+            }
+
+            // 저장
+            const kpiInfo = { mission, metrics, conditions };
+            
+            if (supabaseClient && SupabaseConfig.enabled) {
+                // Supabase에 저장
+                const success = await saveKpiToSupabase(curSub, kpiInfo);
+                if (success) {
+                    await loadKpiFromSupabase();
+                }
+            } else {
+                // localStorage에 저장
+                kpiData[curSub] = kpiInfo;
+                saveKpiDataToStorage();
+            }
+            
+            closeKpiModal();
+            renderKpiSection();
+            updateLastUpdateTime();
+            toast('✅ KPI가 저장되었습니다');
+        }
+
+        // KPI 모달 클릭 이벤트
+        document.getElementById('kpiModal').addEventListener('click', e => {
+            if (e.target.id === 'kpiModal') closeKpiModal();
+        });
+
+        // 초기화 시 KPI 데이터 로드
+        loadKpiData();
+
+        loadTheme();
+    </script>
+</body>
+</html>

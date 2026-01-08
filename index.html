@@ -4721,7 +4721,7 @@
             container.innerHTML = '';
             if (metrics && metrics.length > 0) {
                 metrics.forEach(m => {
-                    addSubMetricField(m.label, m.value, m.unit);
+                    addSubMetricField(m.label, m.value, m.unit, m.target || '');
                 });
             }
         }
@@ -4745,7 +4745,7 @@
         }
 
         // 서브 KPI 필드 추가 (지표명, 값, 단위만)
-        function addSubMetricField(label = '', value = '', unit = '') {
+        function addSubMetricField(label = '', value = '', unit = '', target = '') {
             const container = document.getElementById('kpiSubMetricsList');
             const div = document.createElement('div');
             div.className = 'kpi-form-item sub';
@@ -4753,6 +4753,10 @@
                 <input type="text" placeholder="지표명" value="${label}">
                 <input type="text" class="small" placeholder="값" value="${value}">
                 <input type="text" class="small" placeholder="단위" value="${unit}">
+                <div class="target-input">
+                    <span class="target-prefix">목표</span>
+                    <input type="text" class="small" placeholder="목표값" value="${target}">
+                </div>
                 <button class="btn-remove-item" onclick="this.parentElement.remove()">×</button>
             `;
             container.appendChild(div);
@@ -4815,8 +4819,9 @@
                     const label = inputs[0].value.trim();
                     const value = inputs[1].value.trim();
                     const unit = inputs[2].value.trim();
+                    const target = inputs[3].value.trim();
                     if (label && value) {
-                        subMetrics.push({ label, value, unit });
+                        subMetrics.push({ label, value, unit, target });
                     }
                 });
             }

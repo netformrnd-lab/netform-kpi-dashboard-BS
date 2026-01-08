@@ -753,14 +753,19 @@
             border-color: var(--blue);
         }
 
-        /* 30% 미만 부서 강조 */
-        .dept-card.critical-alert {
-            border-color: var(--red);
-            background: var(--red-light);
+        /* 부서 카드 - toss 스타일 */
+        .dept-card {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-light);
         }
 
-        .dept-card.critical-alert:hover {
-            border-color: var(--red);
+        .dept-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
 
         .dept-header {
@@ -798,9 +803,6 @@
             color: var(--blue);
         }
 
-        .dept-pct.low { color: var(--orange); }
-        .dept-pct.critical { color: var(--red); }
-
         .dept-bar {
             height: 6px;
             background: var(--bg);
@@ -816,9 +818,6 @@
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             width: 0;
         }
-
-        .dept-bar-fill.low { background: var(--orange); }
-        .dept-bar-fill.critical { background: var(--red); }
 
         /* 프로그레스 바 애니메이션 */
         .dept-bar-fill.animated {
@@ -990,7 +989,7 @@
         .tabs {
             display: flex;
             gap: 8px;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
         }
 
@@ -1013,6 +1012,48 @@
         .tab.active {
             background: var(--blue);
             color: white;
+        }
+
+        /* 팀별 진척률 바 */
+        .team-progress-bar {
+            background: linear-gradient(135deg, var(--blue-light) 0%, var(--bg) 100%);
+            border: 1px solid var(--blue);
+            border-radius: var(--radius-md);
+            padding: 14px 20px;
+            margin-bottom: 20px;
+        }
+
+        .team-progress-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .team-progress-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--blue);
+        }
+
+        .team-progress-value,
+        .team-progress-members {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .team-progress-value strong,
+        .team-progress-members strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .team-progress-kpi {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            background: var(--bg-elevated);
+            padding: 4px 10px;
+            border-radius: 12px;
         }
 
         /* 멤버 그리드 */
@@ -1576,8 +1617,21 @@
             transition: all 0.2s ease;
         }
 
+        .kpi-metric-card.main {
+            background: linear-gradient(135deg, var(--blue-light) 0%, var(--bg) 100%);
+            border: 1px solid var(--blue);
+        }
+
         .kpi-metric-card:hover {
             background: var(--blue-light);
+            transform: translateY(-2px);
+        }
+
+        .kpi-metric-progress {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 8px;
         }
 
         .kpi-metric-value {
@@ -1599,10 +1653,61 @@
             margin-top: 8px;
         }
 
+        .kpi-metric-detail {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
         .kpi-metric-period {
             font-size: 11px;
             color: var(--text-disabled);
             margin-top: 4px;
+        }
+
+        .kpi-team-progress {
+            text-align: center;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            margin-top: 12px;
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .kpi-team-progress strong {
+            color: var(--blue);
+            font-size: 18px;
+        }
+
+        /* 서브 KPI 스타일 */
+        .kpi-sub-section {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-sub-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .kpi-sub-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 24px;
+        }
+
+        .kpi-sub-item {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .kpi-sub-item strong {
+            color: var(--text-primary);
         }
 
         /* KPI 조건 리스트 */
@@ -1783,6 +1888,11 @@
             background: var(--bg);
             padding: 12px;
             border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .kpi-form-item.sub {
+            background: var(--bg-elevated);
         }
 
         .kpi-form-item input {
@@ -1803,6 +1913,27 @@
 
         .kpi-form-item input.small {
             max-width: 80px;
+        }
+
+        .target-input {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--blue-light);
+            padding: 4px 8px 4px 12px;
+            border-radius: 8px;
+        }
+
+        .target-prefix {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--blue);
+            white-space: nowrap;
+        }
+
+        .target-input input {
+            max-width: 70px;
+            background: white;
         }
 
         .btn-remove-item {
@@ -2057,16 +2188,6 @@
                 <div class="nav-label">부서</div>
                 <div id="navDepts"></div>
             </div>
-
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar">범석</div>
-                    <div>
-                        <div class="user-name">김범석</div>
-                        <div class="user-role">그로스팀 매니저</div>
-                    </div>
-                </div>
-            </div>
         </aside>
 
         <!-- 메인 -->
@@ -2141,15 +2262,15 @@
                         <div class="stat-card">
                             <div class="stat-label">전체 진척률</div>
                             <div class="stat-value" id="statProgress">0%</div>
-                            <div class="stat-change">↑ 전월 대비 +5%</div>
+                            <div class="stat-change" id="statProgressChange"></div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-label">완료 업무</div>
+                            <div class="stat-label">달성 KPI</div>
                             <div class="stat-value" id="statDone">0</div>
-                            <div class="stat-change">↑ 이번 주 +3건</div>
+                            <div class="stat-change" id="statDoneChange"></div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-label">등록 업무</div>
+                            <div class="stat-label">전체 메인 KPI</div>
                             <div class="stat-value" id="statTotal">0</div>
                         </div>
                         <div class="stat-card">
@@ -2176,15 +2297,15 @@
                                     <canvas id="donutChart"></canvas>
                                     <div class="donut-center">
                                         <div class="donut-value" id="donutPct">0%</div>
-                                        <div class="donut-label">달성률</div>
+                                        <div class="donut-label">KPI 달성률</div>
                                     </div>
                                 </div>
                                 <div class="donut-stats">
-                                    <div class="donut-stat-row" title="완료된 업무 수">
-                                        <span class="donut-stat-label">완료</span>
+                                    <div class="donut-stat-row" title="달성한 KPI 수">
+                                        <span class="donut-stat-label">달성</span>
                                         <span class="donut-stat-value green" id="dsDone">0</span>
                                     </div>
-                                    <div class="donut-stat-row" title="진행중인 업무 수">
+                                    <div class="donut-stat-row" title="진행중인 KPI 수">
                                         <span class="donut-stat-label">진행중</span>
                                         <span class="donut-stat-value orange" id="dsPending">0</span>
                                     </div>
@@ -2219,10 +2340,6 @@
                                 <div class="detail-stat-label">진척률</div>
                             </div>
                             <div class="detail-stat">
-                                <div class="detail-stat-value" id="detailTasks">0</div>
-                                <div class="detail-stat-label">업무</div>
-                            </div>
-                            <div class="detail-stat">
                                 <div class="detail-stat-value" id="detailMembers">0</div>
                                 <div class="detail-stat-label">인원</div>
                             </div>
@@ -2232,6 +2349,16 @@
 
                 <div class="detail-content">
                     <div class="tabs" id="tabs"></div>
+
+                    <!-- 선택된 팀 진척률 표시 -->
+                    <div class="team-progress-bar" id="teamProgressBar">
+                        <div class="team-progress-info">
+                            <span class="team-progress-name" id="teamProgressName">그로스팀</span>
+                            <span class="team-progress-value">진척률 <strong id="teamProgressValue">0%</strong></span>
+                            <span class="team-progress-members">인원 <strong id="teamProgressMembers">0</strong>명</span>
+                            <span class="team-progress-kpi" id="teamProgressKpi">메인 KPI 0개</span>
+                        </div>
+                    </div>
 
                     <!-- KPI 섹션 -->
                     <div class="kpi-section">
@@ -2416,18 +2543,33 @@
                     <textarea class="kpi-form-textarea" id="kpiMissionInput" placeholder="팀의 미션과 역할을 설명해주세요..."></textarea>
                 </div>
 
-                <!-- 핵심 지표 (선택) -->
+                <!-- 메인 KPI (진척률 반영) -->
                 <div class="kpi-form-section">
                     <label class="kpi-form-toggle">
-                        <input type="checkbox" id="kpiMetricsToggle" onchange="toggleKpiMetrics()">
+                        <input type="checkbox" id="kpiMainMetricsToggle" onchange="toggleKpiMainMetrics()">
                         <div>
-                            <div class="kpi-form-toggle-label">핵심 지표 추가</div>
-                            <div class="kpi-form-toggle-desc">수치로 측정 가능한 목표를 설정합니다 (선택)</div>
+                            <div class="kpi-form-toggle-label">🎯 메인 KPI 추가</div>
+                            <div class="kpi-form-toggle-desc">진척률 계산에 포함됩니다 (현재값/목표값 = 진척률)</div>
                         </div>
                     </label>
-                    <div class="kpi-form-items" id="kpiMetricsItems">
-                        <div id="kpiMetricsList"></div>
-                        <button class="btn-add-item" onclick="addMetricField()">+ 지표 추가</button>
+                    <div class="kpi-form-items" id="kpiMainMetricsItems" style="display:none;">
+                        <div id="kpiMainMetricsList"></div>
+                        <button class="btn-add-item" onclick="addMainMetricField()">+ 메인 KPI 추가</button>
+                    </div>
+                </div>
+
+                <!-- 서브 KPI (참고용) -->
+                <div class="kpi-form-section">
+                    <label class="kpi-form-toggle">
+                        <input type="checkbox" id="kpiSubMetricsToggle" onchange="toggleKpiSubMetrics()">
+                        <div>
+                            <div class="kpi-form-toggle-label">📋 서브 KPI 추가</div>
+                            <div class="kpi-form-toggle-desc">참고용 지표입니다 (진척률 계산 제외)</div>
+                        </div>
+                    </label>
+                    <div class="kpi-form-items" id="kpiSubMetricsItems" style="display:none;">
+                        <div id="kpiSubMetricsList"></div>
+                        <button class="btn-add-item" onclick="addSubMetricField()">+ 서브 KPI 추가</button>
                     </div>
                 </div>
 
@@ -3045,8 +3187,11 @@
                     kpiData[kpi.sub_dept_id] = {
                         id: kpi.id,
                         mission: kpi.mission,
-                        metrics: kpi.metrics || [],
-                        conditions: kpi.conditions || []
+                        mainMetrics: kpi.main_metrics || [],
+                        subMetrics: kpi.sub_metrics || [],
+                        conditions: kpi.conditions || [],
+                        updated_at: kpi.updated_at,
+                        updated_by: kpi.updated_by
                     };
                 });
                 
@@ -3067,7 +3212,9 @@
                     .upsert({
                         sub_dept_id: subDeptId,
                         mission: kpiInfo.mission,
-                        metrics: kpiInfo.metrics,
+                        main_metrics: kpiInfo.mainMetrics || [],
+                        sub_metrics: kpiInfo.subMetrics || [],
+                        metrics: [], // 레거시 필드 (호환성)
                         conditions: kpiInfo.conditions,
                         updated_at: new Date().toISOString(),
                         updated_by: CURRENT_USER
@@ -3386,7 +3533,7 @@
 
         const getName = f => f.split(' ')[0];
         const getAvatar = f => { const n = f.split(' ')[0]; return n.length >= 2 ? n.slice(1) : n; };
-        const getColorClass = p => p < 30 ? 'critical' : p < 50 ? 'low' : '';
+        const getColorClass = p => p >= 80 ? 'high' : p < 50 ? 'low' : '';
 
         // D-day 계산
         function getDday(dueDate) {
@@ -3502,17 +3649,14 @@
 
         // 알림 배지가 있는 부서 확인
         function getDeptAlertStatus(deptId) {
-            const st = getDeptStats(deptId);
-            return st.avg < 30;
+            return false; // 느낌표 표시 비활성화
         }
 
         function renderNav() {
             document.getElementById('navDepts').innerHTML = ORG.departments.map(d => {
-                const hasAlert = getDeptAlertStatus(d.id);
                 return `
                     <div class="nav-item" onclick="showDetail('${d.id}')">
                         <span>${d.name}</span>
-                        ${hasAlert ? '<span class="alert-badge">!</span>' : ''}
                     </div>
                 `;
             }).join('');
@@ -3521,23 +3665,24 @@
         function renderDeptGrid() {
             document.getElementById('deptGrid').innerHTML = ORG.departments.map(d => {
                 const st = getDeptStats(d.id);
-                const c = getColorClass(st.avg);
-                const isAlert = st.avg < 30;
                 const lastUpdater = getLastUpdaterForDept(d.id);
+                const hasKpi = st.mainKpiCount > 0;
+                
                 return `
-                    <div class="dept-card ${isAlert ? 'critical-alert' : ''}" onclick="showDetail('${d.id}')">
+                    <div class="dept-card" onclick="showDetail('${d.id}')">
                         <div class="dept-header">
                             <div>
                                 <div class="dept-name">${d.name}</div>
                                 <div class="dept-leader">${d.leader}</div>
-                                ${lastUpdater ? `<div class="dept-updated-by">✏️ ${getName(lastUpdater)} 수정</div>` : ''}
+                                ${hasKpi && lastUpdater ? `<div class="dept-updated-by">✏️ ${getName(lastUpdater)} 수정</div>` : ''}
+                                ${!hasKpi ? `<div class="dept-updated-by" style="color:var(--text-disabled)">KPI 미설정</div>` : ''}
                             </div>
-                            <div class="dept-pct ${c}">${st.avg}%</div>
+                            <div class="dept-pct">${hasKpi ? st.avg + '%' : '-'}</div>
                         </div>
                         <div class="dept-bar">
-                            <div class="dept-bar-fill ${c}" data-progress="${st.avg}"></div>
+                            <div class="dept-bar-fill" data-progress="${hasKpi ? st.avg : 0}"></div>
                         </div>
-                        <div class="dept-meta">${st.count}건 · ${d.headcount}명</div>
+                        <div class="dept-meta">${hasKpi ? `메인 KPI ${st.mainKpiCount}개` : 'KPI를 등록해주세요'}</div>
                     </div>
                 `;
             }).join('');
@@ -3546,27 +3691,26 @@
             setTimeout(animateProgressBars, 100);
         }
 
-        // 부서의 마지막 수정자 찾기
+        // 부서의 마지막 수정자 찾기 (KPI 기반)
         function getLastUpdaterForDept(deptId) {
             const d = ORG.departments.find(x => x.id === deptId);
             if (!d) return null;
 
-            let lastTask = null;
+            let lastUpdater = null;
             let lastTime = null;
 
             d.subDepts.forEach(s => {
-                (taskData[s.id] || []).forEach(t => {
-                    if (t.updatedAt) {
-                        const time = new Date(t.updatedAt);
-                        if (!lastTime || time > lastTime) {
-                            lastTime = time;
-                            lastTask = t;
-                        }
+                const kpi = kpiData[s.id];
+                if (kpi && kpi.updated_at) {
+                    const time = new Date(kpi.updated_at);
+                    if (!lastTime || time > lastTime) {
+                        lastTime = time;
+                        lastUpdater = kpi.updated_by;
                     }
-                });
+                }
             });
 
-            return lastTask?.updatedBy || null;
+            return lastUpdater;
         }
 
         // 프로그레스 바 애니메이션
@@ -3606,63 +3750,103 @@
             });
         }
 
+        // 부서 통계 (KPI 기반)
         function getDeptStats(deptId) {
             const d = ORG.departments.find(x => x.id === deptId);
-            if (!d) return { avg: 0, count: 0, members: 0 };
-            let total = 0, count = 0;
-            const ms = new Set();
+            if (!d) return { avg: 0, mainKpiCount: 0, members: 0 };
+            
+            let totalProgress = 0;
+            let teamsWithKpi = 0;
+            let totalMainKpis = 0;
+
             d.subDepts.forEach(s => {
-                (taskData[s.id] || []).forEach(t => {
-                    total += t.progress;
-                    count++;
-                    if (t.assignee) ms.add(t.assignee);
-                });
+                const progress = calculateTeamProgress(s.id);
+                if (progress !== null) {
+                    totalProgress += progress;
+                    teamsWithKpi++;
+                    
+                    const kpi = kpiData[s.id];
+                    if (kpi && kpi.mainMetrics) {
+                        totalMainKpis += kpi.mainMetrics.length;
+                    }
+                }
             });
-            return { avg: count ? Math.round(total / count) : 0, count, members: ms.size };
+
+            return { 
+                avg: teamsWithKpi ? Math.round(totalProgress / teamsWithKpi) : 0, 
+                mainKpiCount: totalMainKpis, 
+                members: d.headcount 
+            };
         }
 
         function calcAll() {
-            let tp = 0, tt = 0, ct = 0;
-            const am = new Set();
+            // KPI 기반 진척률 계산
             const deptData = [];
-            const memberStats = {};
+            let teamsWithKpi = 0;
+            let totalMainKpis = 0;
+            let completedMainKpis = 0;
 
             ORG.departments.forEach(d => {
-                let dt = 0, dc = 0;
+                let deptProgress = 0;
+                let deptTeamsWithKpi = 0;
+
                 d.subDepts.forEach(s => {
-                    (taskData[s.id] || []).forEach(t => {
-                        dt += t.progress; dc++; tt++; tp += t.progress;
-                        if (t.progress === 100) ct++;
-                        if (t.assignee) {
-                            am.add(t.assignee);
-                            if (!memberStats[t.assignee]) memberStats[t.assignee] = { name: t.assignee, dept: d.name, total: 0, count: 0 };
-                            memberStats[t.assignee].total += t.progress;
-                            memberStats[t.assignee].count++;
+                    const progress = calculateTeamProgress(s.id);
+                    if (progress !== null) {
+                        deptProgress += progress;
+                        deptTeamsWithKpi++;
+                        teamsWithKpi++;
+
+                        // 메인 KPI 완료 카운트
+                        const kpi = kpiData[s.id];
+                        if (kpi && kpi.mainMetrics) {
+                            kpi.mainMetrics.forEach(m => {
+                                totalMainKpis++;
+                                const current = parseFloat(m.value) || 0;
+                                const target = parseFloat(m.target) || 1;
+                                if (current >= target) completedMainKpis++;
+                            });
                         }
-                    });
+                    }
                 });
-                deptData.push(dc ? Math.round(dt / dc) : 0);
+
+                // 부서별 평균 (KPI 있는 팀들만)
+                deptData.push(deptTeamsWithKpi ? Math.round(deptProgress / deptTeamsWithKpi) : 0);
             });
 
-            const avg = tt ? Math.round(tp / tt) : 0;
+            // 전사 평균 진척률
+            const companyProgress = calculateCompanyProgress();
 
-            document.getElementById('statProgress').textContent = avg + '%';
-            document.getElementById('statDone').textContent = ct;
-            document.getElementById('statTotal').textContent = tt;
-            document.getElementById('statMembers').textContent = am.size;
+            // 참여 인원 (KPI 설정된 팀의 멤버 수)
+            let totalMembers = 0;
+            ORG.departments.forEach(d => {
+                d.subDepts.forEach(s => {
+                    if (kpiData[s.id] && kpiData[s.id].mainMetrics && kpiData[s.id].mainMetrics.length > 0) {
+                        totalMembers += s.members.length;
+                    }
+                });
+            });
 
-            document.getElementById('donutPct').textContent = (tt ? Math.round(ct / tt * 100) : 0) + '%';
-            document.getElementById('dsDone').textContent = ct;
-            document.getElementById('dsPending').textContent = tt - ct;
+            // 통계 업데이트
+            document.getElementById('statProgress').textContent = companyProgress + '%';
+            document.getElementById('statDone').textContent = completedMainKpis;
+            document.getElementById('statTotal').textContent = totalMainKpis;
+            document.getElementById('statMembers').textContent = totalMembers;
+
+            // 도넛 차트
+            const completionRate = totalMainKpis ? Math.round(completedMainKpis / totalMainKpis * 100) : 0;
+            document.getElementById('donutPct').textContent = completionRate + '%';
+            document.getElementById('dsDone').textContent = completedMainKpis;
+            document.getElementById('dsPending').textContent = totalMainKpis - completedMainKpis;
 
             // 상단 슬로건 바 업데이트
-            const goalRatio = Math.min((avg / GOAL_TARGET) * 100, 100);
-            document.getElementById('topCurrentPct').textContent = avg + '%';
+            const goalRatio = Math.min((companyProgress / GOAL_TARGET) * 100, 100);
+            document.getElementById('topCurrentPct').textContent = companyProgress + '%';
             document.getElementById('topProgressFill').style.width = goalRatio + '%';
             document.getElementById('topProgressText').textContent = goalRatio.toFixed(1) + '% 달성';
 
             if (barChart) { barChart.data.datasets[0].data = deptData; barChart.update(); }
-            if (donutChart) { donutChart.data.datasets[0].data = [ct, tt - ct]; donutChart.update(); }
+            if (donutChart) { donutChart.data.datasets[0].data = [completedMainKpis, totalMainKpis - completedMainKpis]; donutChart.update(); }
 
             renderDeptGrid();
             renderNav();
@@ -3771,16 +3955,43 @@
             document.getElementById('detailTitle').textContent = d.name;
             document.getElementById('detailSubtitle').textContent = d.leader;
 
+            // 본부 전체 통계 (메인 KPI 기반)
             const st = getDeptStats(deptId);
-            document.getElementById('detailProgress').textContent = st.avg + '%';
-            document.getElementById('detailTasks').textContent = st.count;
-            document.getElementById('detailMembers').textContent = st.members;
+            document.getElementById('detailProgress').textContent = st.mainKpiCount > 0 ? st.avg + '%' : '-';
+            document.getElementById('detailMembers').textContent = d.headcount;
 
             document.querySelectorAll('.nav-item').forEach((el, i) => el.classList.toggle('active', i === ORG.departments.findIndex(x => x.id === deptId) + 1));
 
             renderTabs(d); 
+            updateTeamProgressBar(); // 선택된 팀 진척률 업데이트
             renderKpiSection(); 
             await loadAndRenderInitiatives();
+        }
+
+        // 선택된 팀 진척률 바 업데이트
+        function updateTeamProgressBar() {
+            if (!curSub) return;
+
+            // 팀 이름 찾기
+            let teamName = '';
+            let teamMembers = 0;
+            ORG.departments.forEach(d => {
+                const sub = d.subDepts.find(s => s.id === curSub);
+                if (sub) {
+                    teamName = sub.name;
+                    teamMembers = sub.members.length;
+                }
+            });
+
+            // 팀 진척률 계산
+            const progress = calculateTeamProgress(curSub);
+            const kpi = kpiData[curSub];
+            const mainKpiCount = kpi && kpi.mainMetrics ? kpi.mainMetrics.length : 0;
+
+            document.getElementById('teamProgressName').textContent = teamName;
+            document.getElementById('teamProgressValue').textContent = progress !== null ? progress + '%' : '-';
+            document.getElementById('teamProgressMembers').textContent = teamMembers;
+            document.getElementById('teamProgressKpi').textContent = mainKpiCount > 0 ? `메인 KPI ${mainKpiCount}개` : 'KPI 미설정';
         }
 
         // Initiative 로드 및 렌더링
@@ -3829,6 +4040,7 @@
             curSub = subId;
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
+            updateTeamProgressBar(); // 선택된 팀 진척률 업데이트
             renderKpiSection(); 
             await loadAndRenderInitiatives();
         }
@@ -4111,10 +4323,13 @@
         }
 
         function updateDetail() {
+            const d = ORG.departments.find(x => x.id === curDept);
+            if (!d) return;
+            
             const st = getDeptStats(curDept);
-            document.getElementById('detailProgress').textContent = st.avg + '%';
-            document.getElementById('detailTasks').textContent = st.count;
-            document.getElementById('detailMembers').textContent = st.members;
+            document.getElementById('detailProgress').textContent = st.mainKpiCount > 0 ? st.avg + '%' : '-';
+            document.getElementById('detailMembers').textContent = d.headcount;
+            updateTeamProgressBar();
         }
 
         function saveData() { localStorage.setItem('netform_kpi_v13', JSON.stringify(taskData)); }
@@ -4307,8 +4522,51 @@
                     </div>
                 `;
 
-                // 핵심 지표 (있으면 표시)
-                if (kpi.metrics && kpi.metrics.length > 0) {
+                // 메인 KPI (진척률 반영) - 카드형
+                if (kpi.mainMetrics && kpi.mainMetrics.length > 0) {
+                    // 진척률 계산
+                    const progressList = kpi.mainMetrics.map(m => {
+                        const current = parseFloat(m.value) || 0;
+                        const target = parseFloat(m.target) || 1;
+                        return Math.min(Math.round((current / target) * 100), 100);
+                    });
+                    const avgProgress = progressList.length > 0 
+                        ? Math.round(progressList.reduce((a, b) => a + b, 0) / progressList.length) 
+                        : 0;
+
+                    html += '<div class="kpi-main-section">';
+                    html += '<div class="kpi-metrics-grid">';
+                    kpi.mainMetrics.forEach((m, i) => {
+                        const progress = progressList[i];
+                        const progressColor = progress >= 80 ? 'var(--green)' : progress >= 50 ? 'var(--orange)' : 'var(--blue)';
+                        html += `
+                            <div class="kpi-metric-card main">
+                                <div class="kpi-metric-progress" style="color:${progressColor}">${progress}%</div>
+                                <div class="kpi-metric-label">${m.label}</div>
+                                <div class="kpi-metric-detail">${m.value}/${m.target}${m.unit}</div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    html += `<div class="kpi-team-progress">📊 팀 평균 진척률: <strong>${avgProgress}%</strong></div>`;
+                    html += '</div>';
+                }
+
+                // 서브 KPI (참고용) - 리스트형
+                if (kpi.subMetrics && kpi.subMetrics.length > 0) {
+                    html += `<div class="kpi-sub-section">`;
+                    html += `<div class="kpi-sub-title">📋 참고 지표</div>`;
+                    html += `<div class="kpi-sub-list">`;
+                    kpi.subMetrics.forEach(m => {
+                        html += `<div class="kpi-sub-item">• ${m.label}: <strong>${m.value}${m.unit}</strong></div>`;
+                    });
+                    html += '</div></div>';
+                }
+
+                // 레거시 metrics 표시 (mainMetrics/subMetrics 없고 metrics만 있는 경우)
+                if ((!kpi.mainMetrics || kpi.mainMetrics.length === 0) && 
+                    (!kpi.subMetrics || kpi.subMetrics.length === 0) && 
+                    kpi.metrics && kpi.metrics.length > 0) {
                     html += '<div class="kpi-metrics-grid">';
                     kpi.metrics.forEach(m => {
                         html += `
@@ -4346,9 +4604,42 @@
             }
         }
 
+        // 팀 진척률 계산 함수
+        function calculateTeamProgress(subDeptId) {
+            const kpi = kpiData[subDeptId];
+            if (!kpi || !kpi.mainMetrics || kpi.mainMetrics.length === 0) {
+                return null; // KPI 미설정
+            }
+
+            const progressList = kpi.mainMetrics.map(m => {
+                const current = parseFloat(m.value) || 0;
+                const target = parseFloat(m.target) || 1;
+                return Math.min(Math.round((current / target) * 100), 100);
+            });
+
+            return Math.round(progressList.reduce((a, b) => a + b, 0) / progressList.length);
+        }
+
+        // 전사 진척률 계산 함수
+        function calculateCompanyProgress() {
+            const teamProgresses = [];
+            
+            ORG.departments.forEach(dept => {
+                dept.subDepts.forEach(sub => {
+                    const progress = calculateTeamProgress(sub.id);
+                    if (progress !== null) {
+                        teamProgresses.push(progress);
+                    }
+                });
+            });
+
+            if (teamProgresses.length === 0) return 0;
+            return Math.round(teamProgresses.reduce((a, b) => a + b, 0) / teamProgresses.length);
+        }
+
         // KPI 모달 열기
         function openKpiModal() {
-            const kpi = kpiData[curSub] || { mission: '', metrics: [], conditions: [] };
+            const kpi = kpiData[curSub] || { mission: '', mainMetrics: [], subMetrics: [], conditions: [] };
 
             // 팀 이름 찾기
             let teamName = '';
@@ -4360,11 +4651,17 @@
             document.getElementById('kpiModalSubtitle').textContent = teamName;
             document.getElementById('kpiMissionInput').value = kpi.mission || '';
 
-            // 지표 체크박스 및 필드
-            const hasMetrics = kpi.metrics && kpi.metrics.length > 0;
-            document.getElementById('kpiMetricsToggle').checked = hasMetrics;
-            document.getElementById('kpiMetricsItems').classList.toggle('show', hasMetrics);
-            renderMetricFields(kpi.metrics || []);
+            // 메인 KPI 체크박스 및 필드
+            const hasMainMetrics = kpi.mainMetrics && kpi.mainMetrics.length > 0;
+            document.getElementById('kpiMainMetricsToggle').checked = hasMainMetrics;
+            document.getElementById('kpiMainMetricsItems').style.display = hasMainMetrics ? 'block' : 'none';
+            renderMainMetricFields(kpi.mainMetrics || []);
+
+            // 서브 KPI 체크박스 및 필드
+            const hasSubMetrics = kpi.subMetrics && kpi.subMetrics.length > 0;
+            document.getElementById('kpiSubMetricsToggle').checked = hasSubMetrics;
+            document.getElementById('kpiSubMetricsItems').style.display = hasSubMetrics ? 'block' : 'none';
+            renderSubMetricFields(kpi.subMetrics || []);
 
             // 조건 체크박스 및 필드
             const hasConditions = kpi.conditions && kpi.conditions.length > 0;
@@ -4380,12 +4677,21 @@
             document.getElementById('kpiModal').classList.remove('show');
         }
 
-        // 지표 토글
-        function toggleKpiMetrics() {
-            const checked = document.getElementById('kpiMetricsToggle').checked;
-            document.getElementById('kpiMetricsItems').classList.toggle('show', checked);
-            if (checked && document.getElementById('kpiMetricsList').children.length === 0) {
-                addMetricField();
+        // 메인 KPI 토글
+        function toggleKpiMainMetrics() {
+            const checked = document.getElementById('kpiMainMetricsToggle').checked;
+            document.getElementById('kpiMainMetricsItems').style.display = checked ? 'block' : 'none';
+            if (checked && document.getElementById('kpiMainMetricsList').children.length === 0) {
+                addMainMetricField();
+            }
+        }
+
+        // 서브 KPI 토글
+        function toggleKpiSubMetrics() {
+            const checked = document.getElementById('kpiSubMetricsToggle').checked;
+            document.getElementById('kpiSubMetricsItems').style.display = checked ? 'block' : 'none';
+            if (checked && document.getElementById('kpiSubMetricsList').children.length === 0) {
+                addSubMetricField();
             }
         }
 
@@ -4398,29 +4704,55 @@
             }
         }
 
-        // 지표 필드 렌더링
-        function renderMetricFields(metrics) {
-            const container = document.getElementById('kpiMetricsList');
+        // 메인 KPI 필드 렌더링
+        function renderMainMetricFields(metrics) {
+            const container = document.getElementById('kpiMainMetricsList');
             container.innerHTML = '';
-            if (metrics.length === 0) {
-                addMetricField();
-            } else {
-                metrics.forEach((m, i) => {
-                    addMetricField(m.label, m.value, m.unit, m.period);
+            if (metrics && metrics.length > 0) {
+                metrics.forEach(m => {
+                    addMainMetricField(m.label, m.value, m.unit, m.target);
                 });
             }
         }
 
-        // 지표 필드 추가
-        function addMetricField(label = '', value = '', unit = '', period = '') {
-            const container = document.getElementById('kpiMetricsList');
+        // 서브 KPI 필드 렌더링
+        function renderSubMetricFields(metrics) {
+            const container = document.getElementById('kpiSubMetricsList');
+            container.innerHTML = '';
+            if (metrics && metrics.length > 0) {
+                metrics.forEach(m => {
+                    addSubMetricField(m.label, m.value, m.unit);
+                });
+            }
+        }
+
+        // 메인 KPI 필드 추가 (지표명, 현재값, 단위, 목표값)
+        function addMainMetricField(label = '', value = '', unit = '', target = '') {
+            const container = document.getElementById('kpiMainMetricsList');
             const div = document.createElement('div');
             div.className = 'kpi-form-item';
             div.innerHTML = `
                 <input type="text" placeholder="지표명" value="${label}">
+                <input type="text" class="small" placeholder="현재값" value="${value}">
+                <input type="text" class="small" placeholder="단위" value="${unit}">
+                <div class="target-input">
+                    <span class="target-prefix">목표</span>
+                    <input type="text" class="small" placeholder="목표값" value="${target}">
+                </div>
+                <button class="btn-remove-item" onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        // 서브 KPI 필드 추가 (지표명, 값, 단위만)
+        function addSubMetricField(label = '', value = '', unit = '') {
+            const container = document.getElementById('kpiSubMetricsList');
+            const div = document.createElement('div');
+            div.className = 'kpi-form-item sub';
+            div.innerHTML = `
+                <input type="text" placeholder="지표명" value="${label}">
                 <input type="text" class="small" placeholder="값" value="${value}">
                 <input type="text" class="small" placeholder="단위" value="${unit}">
-                <input type="text" class="small" placeholder="기간" value="${period}">
                 <button class="btn-remove-item" onclick="this.parentElement.remove()">×</button>
             `;
             container.appendChild(div);
@@ -4460,17 +4792,31 @@
                 return;
             }
 
-            // 지표 수집
-            const metrics = [];
-            if (document.getElementById('kpiMetricsToggle').checked) {
-                document.querySelectorAll('#kpiMetricsList .kpi-form-item').forEach(item => {
+            // 메인 KPI 수집
+            const mainMetrics = [];
+            if (document.getElementById('kpiMainMetricsToggle').checked) {
+                document.querySelectorAll('#kpiMainMetricsList .kpi-form-item').forEach(item => {
                     const inputs = item.querySelectorAll('input');
                     const label = inputs[0].value.trim();
                     const value = inputs[1].value.trim();
                     const unit = inputs[2].value.trim();
-                    const period = inputs[3].value.trim();
+                    const target = inputs[3].value.trim();
+                    if (label && value && target) {
+                        mainMetrics.push({ label, value, unit, target });
+                    }
+                });
+            }
+
+            // 서브 KPI 수집
+            const subMetrics = [];
+            if (document.getElementById('kpiSubMetricsToggle').checked) {
+                document.querySelectorAll('#kpiSubMetricsList .kpi-form-item').forEach(item => {
+                    const inputs = item.querySelectorAll('input');
+                    const label = inputs[0].value.trim();
+                    const value = inputs[1].value.trim();
+                    const unit = inputs[2].value.trim();
                     if (label && value) {
-                        metrics.push({ label, value, unit, period });
+                        subMetrics.push({ label, value, unit });
                     }
                 });
             }
@@ -4487,7 +4833,7 @@
             }
 
             // 저장
-            const kpiInfo = { mission, metrics, conditions };
+            const kpiInfo = { mission, mainMetrics, subMetrics, conditions };
             
             if (supabaseClient && SupabaseConfig.enabled) {
                 // Supabase에 저장

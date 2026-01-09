@@ -3674,7 +3674,7 @@
                             <div>
                                 <div class="dept-name">${d.name}</div>
                                 <div class="dept-leader">${d.leader}</div>
-                                ${hasKpi && lastUpdater ? `<div class="dept-updated-by">✏️ ${getName(lastUpdater)} 수정</div>` : ''}
+                                ${hasKpi ? `<div class="dept-updated-by">✏️ 수정</div>` : ''}
                                 ${!hasKpi ? `<div class="dept-updated-by" style="color:var(--text-disabled)">KPI 미설정</div>` : ''}
                             </div>
                             <div class="dept-pct">${hasKpi ? st.avg + '%' : '-'}</div>

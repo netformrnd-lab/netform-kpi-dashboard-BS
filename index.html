@@ -1177,6 +1177,74 @@
             cursor: pointer;
         }
 
+        /* 담당자 체크박스 컨테이너 */
+        .assignee-checkbox-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-elevated);
+            min-height: 44px;
+        }
+
+        .assignee-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: var(--bg);
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 13px;
+        }
+
+        .assignee-checkbox-item:hover {
+            border-color: var(--blue);
+            background: var(--blue-light);
+        }
+
+        .assignee-checkbox-item.selected {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: white;
+        }
+
+        .assignee-checkbox-item input[type="checkbox"] {
+            display: none;
+        }
+
+        /* 툴팁 아이콘 */
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            cursor: help;
+            position: relative;
+        }
+
+        .tooltip-icon:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            background: var(--text-primary);
+            color: var(--bg-elevated);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 4px;
+        }
+
         .task-list {
             display: flex;
             flex-direction: column;
@@ -2034,10 +2102,14 @@
             gap: 12px;
         }
         .init-assignee {
-            width: 80px;
+            min-width: 80px;
+            max-width: 120px;
             text-align: center;
             font-size: 13px;
             color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .init-operation {
             width: 70px;
@@ -2426,8 +2498,12 @@
                 </div>
                 
                 <div style="margin-bottom:16px;">
-                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">담당자</label>
-                    <select class="select" id="initAssignee" style="width:100%;"></select>
+                    <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; margin-bottom:6px;">
+                        담당자
+                        <span class="tooltip-icon" title="담당자 중복 선택 가능">ⓘ</span>
+                    </label>
+                    <div class="assignee-checkbox-container" id="initAssigneeCheckboxes"></div>
+                    <input type="hidden" id="initAssignee" value="">
                 </div>
                 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
@@ -2757,6 +2833,9 @@
                     : init.operation_status === '준비중' ? '준비 중' : '미시작';
                 const statusBadge = init.status === '완료' ? '✅' : init.status === '보류' ? '⏸️' : '🔥';
                 
+                // 담당자 표시 (1명: 직급포함, 2명이상: 이름만)
+                const assigneeDisplay = formatAssigneeDisplay(init.assignee);
+                
                 return `
                     <div class="initiative-item">
                         <div class="init-status ${statusClass}"></div>
@@ -2767,7 +2846,7 @@
                                 <span>상태: ${init.status}</span>
                             </div>
                         </div>
-                        <div class="init-assignee">${init.assignee || '-'}</div>
+                        <div class="init-assignee">${assigneeDisplay}</div>
                         <div class="init-operation ${statusClass}">${statusText}</div>
                         <div class="init-progress">
                             <div class="init-progress-bar">
@@ -2782,6 +2861,25 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // 담당자 표시 포맷 (1명: 직급포함, 2명이상: 이름만)
+        function formatAssigneeDisplay(assignee) {
+            if (!assignee || assignee === '-') return '-';
+            
+            const members = assignee.split(', ').filter(Boolean);
+            
+            if (members.length === 1) {
+                // 1명: 그대로 표시 (직급 포함)
+                return members[0];
+            } else {
+                // 2명 이상: 이름만 표시
+                return members.map(m => {
+                    // "이재훈 리드매니저" → "이재훈"
+                    const namePart = m.split(' ')[0];
+                    return namePart;
+                }).join(', ');
+            }
         }
 
         // Initiative 통계 업데이트
@@ -2809,9 +2907,8 @@
             document.getElementById('initProgress').value = '0';
             document.getElementById('initDueDate').value = '';
             
-            // 담당자 목록 업데이트
-            updateInitAssignees();
-            document.getElementById('initAssignee').value = '';
+            // 담당자 목록 업데이트 (빈 배열)
+            updateInitAssignees([]);
             
             document.getElementById('initiativeModal').classList.add('show');
         }
@@ -2830,8 +2927,8 @@
             document.getElementById('initProgress').value = init.progress;
             document.getElementById('initDueDate').value = init.due_date || '';
             
-            updateInitAssignees();
-            document.getElementById('initAssignee').value = init.assignee || '';
+            // 담당자 목록 업데이트 (기존 담당자 체크)
+            updateInitAssignees(init.assignee || '');
             
             document.getElementById('initiativeModal').classList.add('show');
         }
@@ -2841,16 +2938,50 @@
             document.getElementById('initiativeModal').classList.remove('show');
         }
 
-        // Initiative 담당자 목록 업데이트
-        function updateInitAssignees() {
-            const select = document.getElementById('initAssignee');
+        // Initiative 담당자 목록 업데이트 (체크박스 방식)
+        function updateInitAssignees(selectedAssignees = []) {
+            const container = document.getElementById('initAssigneeCheckboxes');
             const d = ORG.departments.find(x => x.id === curDept);
             const sub = d?.subDepts.find(s => s.id === curSub);
             
-            select.innerHTML = '<option value="">담당자 선택</option>';
-            sub?.members.forEach(m => {
-                select.innerHTML += `<option value="${m}">${m}</option>`;
-            });
+            if (!sub || !sub.members) {
+                container.innerHTML = '<span style="color:var(--text-tertiary);font-size:13px;">팀원이 없습니다</span>';
+                return;
+            }
+
+            // 선택된 담당자 배열로 변환
+            const selectedArray = Array.isArray(selectedAssignees) 
+                ? selectedAssignees 
+                : (selectedAssignees ? selectedAssignees.split(', ').filter(Boolean) : []);
+
+            container.innerHTML = sub.members.map(m => {
+                const isSelected = selectedArray.includes(m);
+                return `
+                    <label class="assignee-checkbox-item ${isSelected ? 'selected' : ''}" onclick="toggleAssignee(this, '${m}')">
+                        <input type="checkbox" value="${m}" ${isSelected ? 'checked' : ''}>
+                        ${getName(m)}
+                    </label>
+                `;
+            }).join('');
+
+            // hidden input 업데이트
+            updateAssigneeHiddenInput();
+        }
+
+        // 담당자 토글
+        function toggleAssignee(label, member) {
+            const checkbox = label.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            label.classList.toggle('selected', checkbox.checked);
+            updateAssigneeHiddenInput();
+        }
+
+        // hidden input 값 업데이트
+        function updateAssigneeHiddenInput() {
+            const container = document.getElementById('initAssigneeCheckboxes');
+            const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+            const selectedMembers = Array.from(checkedBoxes).map(cb => cb.value);
+            document.getElementById('initAssignee').value = selectedMembers.join(', ');
         }
 
         // Initiative 저장

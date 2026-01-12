@@ -2579,7 +2579,7 @@
                         <input type="checkbox" id="kpiConditionsToggle" onchange="toggleKpiConditions()">
                         <div>
                             <div class="kpi-form-toggle-label">조건 추가</div>
-                            <div class="kpi-form-toggle-desc">이니셔티브 선정 기준이나 조건을 설정합니다 (선택)</div>
+                            <div class="kpi-form-toggle-desc" id="kpiConditionsDesc">KPI 선정 기준이나 조건을 설정합니다 (선택)</div>
                         </div>
                     </label>
                     <div class="kpi-form-items" id="kpiConditionsItems">
@@ -4650,6 +4650,12 @@
 
             document.getElementById('kpiModalSubtitle').textContent = teamName;
             document.getElementById('kpiMissionInput').value = kpi.mission || '';
+
+            // 조건 설명 텍스트 (그로스팀만 이니셔티브)
+            const isGrowth = curSub === 'growth';
+            document.getElementById('kpiConditionsDesc').textContent = isGrowth 
+                ? '이니셔티브 선정 기준이나 조건을 설정합니다 (선택)' 
+                : 'KPI 선정 기준이나 조건을 설정합니다 (선택)';
 
             // 메인 KPI 체크박스 및 필드
             const hasMainMetrics = kpi.mainMetrics && kpi.mainMetrics.length > 0;

@@ -159,6 +159,16 @@
             font-size: 10px;
         }
 
+        .logo-img {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            object-fit: contain;
+            background: white;
+            padding: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
         .logo-text {
             font-size: 15px;
             font-weight: 700;
@@ -287,11 +297,16 @@
         }
 
         .slogan-company {
-            font-size: 14px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            letter-spacing: 1px;
-            margin-bottom: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
         }
 
         .slogan-main {
@@ -1243,6 +1258,345 @@
             white-space: nowrap;
             z-index: 1000;
             margin-bottom: 4px;
+        }
+
+        /* ========== 로그인 페이지 (전체 화면) ========== */
+        .login-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e8f4ff 100%);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .login-page.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 520px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-lg);
+            padding: 48px 56px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .login-logo-img {
+            height: 40px;
+            width: auto;
+        }
+
+        .login-logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            font-size: 15px;
+            color: var(--text-tertiary);
+        }
+
+        .login-form-group {
+            margin-bottom: 24px;
+        }
+
+        .login-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .login-select {
+            width: 100%;
+            padding: 16px 18px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .login-select:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px var(--blue-light);
+        }
+
+        .pin-input-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .pin-input {
+            width: 64px;
+            height: 72px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            background: var(--bg);
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .pin-input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px var(--blue-light);
+        }
+
+        .pin-input.filled {
+            border-color: var(--blue);
+            background: var(--blue-light);
+        }
+
+        .pin-input.error {
+            border-color: var(--red);
+            background: var(--red-light);
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-8px); }
+        }
+
+        .login-error {
+            text-align: center;
+            color: var(--red);
+            font-size: 13px;
+            margin-top: 12px;
+            min-height: 20px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            background: var(--blue-dark);
+            transform: translateY(-1px);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 28px 0;
+            color: var(--text-tertiary);
+            font-size: 13px;
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .login-guest-btn {
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .login-guest-btn:hover {
+            background: var(--bg);
+            border-color: var(--text-tertiary);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .login-footer-text {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        /* 로그인 상태 표시 (헤더) */
+        .login-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .login-status:hover {
+            background: var(--border-light);
+        }
+
+        .login-status.logged-in {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        .login-status-icon {
+            font-size: 16px;
+        }
+
+        .login-status-text {
+            font-weight: 500;
+        }
+
+        .login-status-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .login-status-btn:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        /* 다크모드 로그인 페이지 */
+        [data-theme="dark"] .login-page {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        }
+
+        /* 사이드바 하단 로그인 정보 */
+        .sidebar-user-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--blue-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .sidebar-user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-user-role {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .sidebar-logout-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--bg);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .sidebar-logout-btn:hover {
+            background: var(--red-light);
         }
 
         .task-list {
@@ -2244,7 +2598,7 @@
         <!-- 사이드바 -->
         <aside class="sidebar">
             <div class="logo">
-                <div class="logo-icon">POUR</div>
+                <img src="https://raw.githubusercontent.com/netformrnd-lab/netform-kpi-dashboard-BS/main/logo.jpg" alt="Netform R&D" class="logo-img">
                 <div class="logo-text">
                     넷폼알앤디
                     <span>KPI Dashboard</span>
@@ -2259,6 +2613,16 @@
             <div class="nav-section">
                 <div class="nav-label">부서</div>
                 <div id="navDepts"></div>
+            </div>
+
+            <!-- 사이드바 하단 로그인 정보 -->
+            <div class="sidebar-user-info" id="sidebarUserInfo" style="display: none;">
+                <div class="sidebar-user-avatar">👤</div>
+                <div class="sidebar-user-details">
+                    <div class="sidebar-user-name" id="sidebarUserName">-</div>
+                    <div class="sidebar-user-role">로그인 중</div>
+                </div>
+                <button class="sidebar-logout-btn" onclick="logout()" title="로그아웃">🚪</button>
             </div>
         </aside>
 
@@ -2321,6 +2685,10 @@
                                     <option value="11">11월</option>
                                     <option value="12">12월</option>
                                 </select>
+                            </div>
+                            <div class="login-status" id="loginStatus" onclick="openLoginModal()">
+                                <span class="login-status-icon">🔐</span>
+                                <span class="login-status-text">로그인</span>
                             </div>
                             <button class="theme-toggle" onclick="toggleTheme()" title="테마 변경">
                                 <span class="theme-icon-light">🌙</span>
@@ -2810,13 +3178,22 @@
             const termAdd = getTermLabel('add');
             const termEmpty = getTermLabel('empty');
             const icon = curSub === 'growth' ? '📋' : '🎯';
+
+            // 권한 체크
+            const canEdit = canEditTeam(curSub);
+
+            // Initiative 추가 버튼 표시/숨김
+            const addBtn = document.getElementById('initAddBtn');
+            if (addBtn) {
+                addBtn.style.display = canEdit ? 'block' : 'none';
+            }
             
             if (initiativeData.length === 0) {
                 container.innerHTML = `
                     <div style="text-align:center; padding:40px; color:var(--text-tertiary);">
                         <div style="font-size:32px; margin-bottom:12px;">${icon}</div>
                         <div>등록된 ${termEmpty} 없습니다</div>
-                        <button class="btn btn-primary" onclick="openInitiativeModal()" style="margin-top:16px;">+ ${termAdd}</button>
+                        ${canEdit ? `<button class="btn btn-primary" onclick="openInitiativeModal()" style="margin-top:16px;">+ ${termAdd}</button>` : ''}
                     </div>
                 `;
                 updateInitiativeStats();
@@ -2854,10 +3231,12 @@
                             </div>
                             <div class="init-progress-text">${init.progress}%</div>
                         </div>
+                        ${canEdit ? `
                         <div class="init-actions">
                             <button class="init-action-btn edit" onclick="editInitiative('${init.id}')">수정</button>
                             <button class="init-action-btn delete" onclick="confirmDeleteInitiative('${init.id}', '${init.name}')">삭제</button>
                         </div>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
@@ -3421,7 +3800,7 @@
                     leader: '황윤선 상무이사', headcount: 10,
                     subDepts: [
                         { id: 'sales_1', name: '서비스운영 1팀', members: ['한준엽 리드매니저', '조재연 매니저', '정정훈 매니저', '김성민 매니저', '한지혜 매니저'] },
-                        { id: 'sales_2', name: '서비스운영 2팀', members: ['권정아 리드매니저', '김수진 매니저'] },
+                        { id: 'sales_2', name: '서비스운영 2팀', members: ['권정아 리드매니저', '김수진 매니저', '이지연 매니저'] },
                         { id: 'sales_3', name: '서비스운영 3팀', members: ['주현진 리드매니저', '송보람 매니저'] },
                         { id: 'sales_team', name: '영업팀', members: ['이필선 매니저'] }
                     ]
@@ -4629,6 +5008,9 @@
                 if (sub) teamName = sub.name;
             });
 
+            // 권한 체크
+            const canEdit = canEditTeam(curSub);
+
             if (!kpi || !kpi.mission) {
                 // KPI가 없는 경우
                 editBtn.style.display = 'none';
@@ -4636,12 +5018,12 @@
                     <div class="kpi-empty">
                         <div class="kpi-empty-icon">📊</div>
                         <div class="kpi-empty-text">아직 KPI가 등록되지 않았습니다</div>
-                        <button class="btn-kpi-add" onclick="openKpiModal()">+ KPI 등록하기</button>
+                        ${canEdit ? '<button class="btn-kpi-add" onclick="openKpiModal()">+ KPI 등록하기</button>' : '<div style="color:var(--text-tertiary);font-size:13px;margin-top:8px;">KPI 등록은 해당 팀 로그인 후 가능합니다</div>'}
                     </div>
                 `;
             } else {
                 // KPI가 있는 경우
-                editBtn.style.display = 'block';
+                editBtn.style.display = canEdit ? 'block' : 'none';
 
                 let html = '';
 
@@ -5004,6 +5386,254 @@
         loadKpiData();
 
         loadTheme();
+
+        // ========== 로그인 시스템 ==========
+        const AUTH_CONFIG = {
+            teams: [
+                { id: 'sales', name: '영업본부', pin: '8073', subTeams: ['sales_1', 'sales_2', 'sales_3', 'sales_team'] },
+                { id: 'estimation', name: '설계/적산팀', pin: '2659', subTeams: ['est_team', 'apt_square'] },
+                { id: 'management', name: '경영관리본부', pin: '4185', subTeams: ['mgmt_team', 'growth'] },
+                { id: 'brand_team', name: '브랜드마케팅팀', pin: '6291', subTeams: ['brand_team'] },
+                { id: 'commerce', name: '커머스사업본부', pin: '5923', subTeams: ['brand_comm', 'media_comm', 'overseas', 'moyeora'] },
+                { id: 'rnd', name: '기술연구소', pin: '7362', subTeams: ['rnd_team'] },
+                { id: 'factory', name: '용인공장', pin: '9514', subTeams: ['factory_admin', 'factory_prod'] },
+                { id: 'admin', name: '🔑 관리자', pin: '8686', isAdmin: true }
+            ]
+        };
+
+        let currentUser = null; // { id, name, isAdmin, subTeams }
+
+        // 로그인 페이지 표시
+        function showLoginPage() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('loginTeamSelect').value = '';
+            clearPinInputs();
+            document.getElementById('loginError').textContent = '';
+        }
+
+        // 로그인 페이지 숨기기
+        function hideLoginPage() {
+            document.getElementById('loginPage').classList.add('hidden');
+        }
+
+        // 헤더의 로그인 버튼 클릭 시
+        function openLoginModal() {
+            if (currentUser) {
+                // 이미 로그인 되어있으면 로그아웃 확인
+                if (confirm('로그아웃 하시겠습니까?')) {
+                    logout();
+                }
+                return;
+            }
+            showLoginPage();
+        }
+
+        function closeLoginModal() {
+            hideLoginPage();
+        }
+
+        function clearPinInputs() {
+            const inputs = document.querySelectorAll('.pin-input');
+            inputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled', 'error');
+            });
+            inputs[0]?.focus();
+        }
+
+        function handlePinInput(e, index) {
+            const input = e.target;
+            const inputs = document.querySelectorAll('.pin-input');
+            
+            // 숫자만 허용
+            input.value = input.value.replace(/[^0-9]/g, '');
+            
+            if (input.value) {
+                input.classList.add('filled');
+                // 다음 입력칸으로 이동
+                if (index < 3) {
+                    inputs[index + 1].focus();
+                }
+            } else {
+                input.classList.remove('filled');
+            }
+            
+            // 에러 상태 제거
+            inputs.forEach(i => i.classList.remove('error'));
+            document.getElementById('loginError').textContent = '';
+            
+            // 4자리 모두 입력되면 자동 로그인 시도
+            const pin = Array.from(inputs).map(i => i.value).join('');
+            if (pin.length === 4) {
+                attemptLogin();
+            }
+        }
+
+        function handlePinKeydown(e, index) {
+            const inputs = document.querySelectorAll('.pin-input');
+            
+            // 백스페이스 처리
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                inputs[index - 1].focus();
+            }
+        }
+
+        function attemptLogin() {
+            const teamId = document.getElementById('loginTeamSelect').value;
+            const inputs = document.querySelectorAll('.pin-input');
+            const pin = Array.from(inputs).map(i => i.value).join('');
+            
+            if (!teamId) {
+                document.getElementById('loginError').textContent = '팀을 선택해주세요';
+                return;
+            }
+            
+            if (pin.length !== 4) {
+                document.getElementById('loginError').textContent = 'PIN 4자리를 입력해주세요';
+                return;
+            }
+            
+            const team = AUTH_CONFIG.teams.find(t => t.id === teamId);
+            
+            if (team && team.pin === pin) {
+                // 로그인 성공
+                currentUser = {
+                    id: team.id,
+                    name: team.name.replace('🔑 ', ''),
+                    isAdmin: team.isAdmin || false,
+                    subTeams: team.subTeams || []
+                };
+                
+                hideLoginPage();
+                updateLoginStatus();
+                updateUIForAuth();
+                toast(`✅ ${currentUser.name}으로 로그인되었습니다`);
+            } else {
+                // 로그인 실패
+                inputs.forEach(i => i.classList.add('error'));
+                document.getElementById('loginError').textContent = 'PIN이 올바르지 않습니다';
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            updateLoginStatus();
+            updateUIForAuth();
+            showLoginPage(); // 로그아웃 시 로그인 페이지로 이동
+            toast('👋 로그아웃되었습니다');
+        }
+
+        function guestMode() {
+            hideLoginPage();
+            toast('👀 조회 모드로 접속합니다');
+        }
+
+        function updateLoginStatus() {
+            const statusEl = document.getElementById('loginStatus');
+            const sidebarUserInfo = document.getElementById('sidebarUserInfo');
+            const sidebarUserName = document.getElementById('sidebarUserName');
+            
+            if (currentUser) {
+                statusEl.className = 'login-status logged-in';
+                statusEl.innerHTML = `
+                    <span class="login-status-icon">👤</span>
+                    <span class="login-status-text">${currentUser.name}</span>
+                    <button class="login-status-btn" onclick="event.stopPropagation(); logout();">로그아웃</button>
+                `;
+                
+                // 사이드바 하단 로그인 정보 표시
+                sidebarUserInfo.style.display = 'flex';
+                sidebarUserName.textContent = currentUser.name;
+            } else {
+                statusEl.className = 'login-status';
+                statusEl.innerHTML = `
+                    <span class="login-status-icon">🔐</span>
+                    <span class="login-status-text">로그인</span>
+                `;
+                
+                // 사이드바 하단 로그인 정보 숨기기
+                sidebarUserInfo.style.display = 'none';
+            }
+        }
+
+        function updateUIForAuth() {
+            // 모든 수정/삭제 버튼 업데이트
+            updateKpiButtons();
+            renderInitiatives();
+            renderDetail();
+        }
+
+        function canEditTeam(teamId) {
+            if (!currentUser) return false;
+            if (currentUser.isAdmin) return true;
+            // subTeams 배열에 해당 팀이 포함되어 있는지 확인
+            return currentUser.subTeams && currentUser.subTeams.includes(teamId);
+        }
+
+        function updateKpiButtons() {
+            // KPI 설정 버튼 표시/숨김
+            const kpiSetupBtn = document.getElementById('kpiSetupBtn');
+            if (kpiSetupBtn) {
+                kpiSetupBtn.style.display = canEditTeam(curSub) ? 'block' : 'none';
+            }
+        }
+
+        // 페이지 로드 시 로그인 상태 확인
+        updateLoginStatus();
     </script>
+
+    <!-- 로그인 페이지 (전체 화면) -->
+    <div class="login-page" id="loginPage">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">
+                        <img src="https://raw.githubusercontent.com/netformrnd-lab/netform-kpi-dashboard-BS/main/logo.jpg" alt="Netform R&D" class="login-logo-img">
+                    </div>
+                    <div class="login-title">팀 로그인</div>
+                    <div class="login-subtitle">팀을 선택하고 PIN을 입력하세요</div>
+                </div>
+                
+                <div class="login-form-group">
+                    <label class="login-label">팀 선택</label>
+                    <select class="login-select" id="loginTeamSelect">
+                        <option value="">팀을 선택하세요</option>
+                        <option value="sales">영업본부</option>
+                        <option value="estimation">설계/적산팀</option>
+                        <option value="management">경영관리본부</option>
+                        <option value="brand_team">브랜드마케팅팀</option>
+                        <option value="commerce">커머스사업본부</option>
+                        <option value="rnd">기술연구소</option>
+                        <option value="factory">용인공장</option>
+                        <option disabled>──────────</option>
+                        <option value="admin">🔑 관리자</option>
+                    </select>
+                </div>
+                
+                <div class="login-form-group">
+                    <label class="login-label">PIN 입력</label>
+                    <div class="pin-input-container">
+                        <input type="text" class="pin-input" maxlength="1" inputmode="numeric" 
+                               oninput="handlePinInput(event, 0)" onkeydown="handlePinKeydown(event, 0)">
+                        <input type="text" class="pin-input" maxlength="1" inputmode="numeric"
+                               oninput="handlePinInput(event, 1)" onkeydown="handlePinKeydown(event, 1)">
+                        <input type="text" class="pin-input" maxlength="1" inputmode="numeric"
+                               oninput="handlePinInput(event, 2)" onkeydown="handlePinKeydown(event, 2)">
+                        <input type="text" class="pin-input" maxlength="1" inputmode="numeric"
+                               oninput="handlePinInput(event, 3)" onkeydown="handlePinKeydown(event, 3)">
+                    </div>
+                    <div class="login-error" id="loginError"></div>
+                </div>
+                
+                <button class="login-btn" onclick="attemptLogin()">로그인</button>
+                
+                <div class="login-divider">또는</div>
+                
+                <button class="login-guest-btn" onclick="guestMode()">
+                    로그인 없이 둘러보기
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

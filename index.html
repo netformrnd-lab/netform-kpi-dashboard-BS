@@ -3807,10 +3807,9 @@
                 },
                 {
                     id: 'design', name: '설계/적산팀', color: 'purple',
-                    leader: '조현식 이사', headcount: 3,
+                    leader: '조현식 이사', headcount: 4,
                     subDepts: [
-                        { id: 'est_team', name: '적산팀', members: ['김영섭 리드매니저', '신수진 매니저'] },
-                        { id: 'apt_square', name: '아파트스퀘어팀', members: ['한인규 리드매니저'] }
+                        { id: 'apt_square', name: '아파트스퀘어팀', members: ['한인규 리드매니저', '김영성 매니저', '신수진 매니저', '정태윤 매니저'] }
                     ]
                 },
                 {
@@ -3902,12 +3901,10 @@
                 'sales_team': [
                     { name: '신규 계약 10건 달성', assignee: '이필선 매니저', progress: 25, priority: 'high', dueDate: '2026-01-31', createdAt: now, updatedAt: now, updatedBy: '이필선 매니저' }
                 ],
-                'est_team': [
-                    { name: '적산 시스템 고도화', assignee: '김영섭 리드매니저', progress: 90, priority: 'high', dueDate: '2026-01-20', createdAt: now, updatedAt: now, updatedBy: '김영섭 리드매니저' },
-                    { name: '원가 분석 리포트', assignee: '신수진 매니저', progress: 70, priority: 'medium', dueDate: '2026-01-15', createdAt: now, updatedAt: now, updatedBy: '신수진 매니저' }
-                ],
                 'apt_square': [
-                    { name: '아파트스퀘어 2.0 기획', assignee: '한인규 리드매니저', progress: 65, priority: 'high', dueDate: '2026-02-01', createdAt: now, updatedAt: now, updatedBy: '한인규 리드매니저' }
+                    { name: '아파트스퀘어 2.0 기획', assignee: '한인규 리드매니저', progress: 65, priority: 'high', dueDate: '2026-02-01', createdAt: now, updatedAt: now, updatedBy: '한인규 리드매니저' },
+                    { name: '적산 시스템 고도화', assignee: '김영성 매니저', progress: 90, priority: 'high', dueDate: '2026-01-20', createdAt: now, updatedAt: now, updatedBy: '김영성 매니저' },
+                    { name: '원가 분석 리포트', assignee: '신수진 매니저', progress: 70, priority: 'medium', dueDate: '2026-01-15', createdAt: now, updatedAt: now, updatedBy: '신수진 매니저' }
                 ],
                 'mgmt_team': [
                     { name: '2026 예산 편성', assignee: '신나영 리드매니저', progress: 100, priority: 'high', dueDate: '2026-01-05', createdAt: now, updatedAt: now, updatedBy: '신나영 리드매니저' },
@@ -5391,7 +5388,7 @@
         const AUTH_CONFIG = {
             teams: [
                 { id: 'sales', name: '영업본부', pin: '8520', subTeams: ['sales_1', 'sales_2', 'sales_3', 'sales_team'] },
-                { id: 'estimation', name: '설계/적산팀', pin: '2659', subTeams: ['est_team', 'apt_square'] },
+                { id: 'estimation', name: '설계/적산팀', pin: '2659', subTeams: ['apt_square'] },
                 { id: 'management', name: '경영관리본부', pin: '2026', subTeams: ['mgmt_team', 'growth'] },
                 { id: 'brand_team', name: '브랜드마케팅팀', pin: '1234', subTeams: ['brand_team'] },
                 { id: 'commerce', name: '커머스사업본부', pin: '8420', subTeams: ['brand_comm', 'media_comm', 'overseas', 'moyeora'] },

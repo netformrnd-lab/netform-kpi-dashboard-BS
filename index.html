@@ -1921,9 +1921,536 @@
             .goal-banner { padding: 16px 24px; }
         }
 
+        /* ========== 모바일 최적화 (600px 이하) ========== */
         @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .donut-layout { flex-direction: column; }
+            /* 상단 슬로건 배너 */
+            .top-slogan-bar {
+                padding: 24px 16px;
+            }
+            
+            .slogan-company {
+                font-size: 12px;
+                padding: 6px 12px;
+                letter-spacing: 1px;
+            }
+            
+            .slogan-main {
+                font-size: 20px;
+                margin-bottom: 16px;
+                line-height: 1.4;
+            }
+            
+            .slogan-progress-wrap {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .slogan-stats {
+                font-size: 13px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+            
+            .slogan-current {
+                font-size: 18px !important;
+            }
+            
+            .slogan-progress-bar {
+                width: 160px;
+            }
+            
+            .slogan-achievement {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            /* 히어로 영역 */
+            .hero {
+                padding: 16px;
+            }
+            
+            .hero-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .hero-title {
+                font-size: 22px;
+            }
+            
+            .hero-meta-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .hero-actions {
+                width: 100%;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .period-filter {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+            
+            .period-select {
+                flex: 1;
+                min-width: 0;
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+            
+            /* 로그인 상태 */
+            .login-status {
+                padding: 8px 12px !important;
+            }
+            
+            .login-status-text {
+                font-size: 12px;
+            }
+
+            /* 통계 그리드 */
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .stat-card {
+                padding: 16px;
+            }
+            
+            .stat-value {
+                font-size: 28px;
+            }
+            
+            .stat-label {
+                font-size: 12px;
+            }
+
+            /* 콘텐츠 영역 */
+            .content {
+                padding: 16px;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .section-title {
+                font-size: 16px;
+            }
+
+            /* 부서 카드 그리드 */
+            .dept-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .dept-card {
+                padding: 16px;
+            }
+            
+            .dept-name {
+                font-size: 15px;
+            }
+            
+            .dept-pct {
+                font-size: 24px;
+            }
+
+            /* 차트 그리드 */
+            .chart-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .card {
+                padding: 16px;
+            }
+            
+            .card-title {
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+            
+            .chart-area {
+                height: 200px;
+                overflow-x: auto;
+                overflow-y: hidden;
+            }
+            
+            .chart-area canvas {
+                min-width: 300px;
+            }
+            
+            /* 도넛 차트 레이아웃 */
+            .donut-layout {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            
+            .donut-wrap {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .donut-value {
+                font-size: 32px;
+            }
+            
+            .donut-label {
+                font-size: 12px;
+            }
+            
+            .donut-stats {
+                width: 100%;
+            }
+            
+            .donut-stat-row {
+                padding: 12px 14px;
+            }
+            
+            .donut-stat-label {
+                font-size: 13px;
+            }
+            
+            .donut-stat-value {
+                font-size: 18px;
+            }
+
+            /* 상세 페이지 */
+            .detail-hero {
+                padding: 16px;
+            }
+            
+            .detail-title {
+                font-size: 22px;
+            }
+            
+            .detail-content {
+                padding: 16px;
+            }
+
+            /* 탭 */
+            .tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 8px;
+                margin-bottom: 16px;
+                gap: 8px;
+            }
+            
+            .tab {
+                flex-shrink: 0;
+                padding: 10px 16px;
+                font-size: 13px;
+                white-space: nowrap;
+            }
+
+            /* 팀 진척률 바 */
+            .team-progress-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 12px 16px;
+            }
+            
+            .team-progress-bar .team-name {
+                font-size: 14px;
+            }
+
+            /* KPI 섹션 */
+            .kpi-section {
+                padding: 16px;
+            }
+            
+            .kpi-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .kpi-header-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .kpi-mission {
+                padding: 16px;
+            }
+            
+            .kpi-mission-text {
+                font-size: 14px;
+            }
+            
+            .kpi-metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .kpi-metric-card {
+                padding: 16px;
+            }
+            
+            .kpi-metric-progress {
+                font-size: 24px;
+            }
+            
+            .kpi-metric-value {
+                font-size: 22px;
+            }
+            
+            .kpi-team-progress {
+                font-size: 14px;
+                padding: 12px;
+            }
+            
+            .kpi-conditions {
+                padding: 16px;
+            }
+            
+            .kpi-condition-text {
+                font-size: 13px;
+            }
+
+            /* Initiative / 핵심 과제 */
+            .initiative-section {
+                padding: 16px;
+            }
+            
+            .initiative-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .initiative-stats {
+                width: 100%;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+            
+            .initiative-stat {
+                padding: 12px 8px;
+            }
+            
+            .initiative-stat-value {
+                font-size: 20px;
+            }
+            
+            .initiative-stat-label {
+                font-size: 11px;
+            }
+            
+            .initiative-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+            }
+            
+            .init-info {
+                width: 100%;
+            }
+            
+            .init-name {
+                font-size: 14px;
+            }
+            
+            .init-meta {
+                font-size: 12px;
+            }
+            
+            .init-assignee {
+                font-size: 13px;
+            }
+            
+            .init-operation {
+                font-size: 12px;
+            }
+            
+            .init-progress {
+                width: 100%;
+            }
+            
+            .init-progress-bar {
+                flex: 1;
+            }
+            
+            .init-actions {
+                width: 100%;
+                justify-content: flex-end;
+                opacity: 1;
+            }
+
+            /* 멤버 그리드 */
+            .member-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .member-card {
+                padding: 14px;
+            }
+
+            /* 모달 */
+            .modal-box {
+                width: 95%;
+                max-width: none;
+                margin: 16px;
+                max-height: 90vh;
+            }
+            
+            .modal-header {
+                padding: 16px;
+            }
+            
+            .modal-body {
+                padding: 16px;
+                max-height: 60vh;
+            }
+            
+            .modal-stats {
+                padding: 16px;
+            }
+            
+            .modal-stat-value {
+                font-size: 20px;
+            }
+
+            /* KPI 모달 */
+            .kpi-modal .modal-box {
+                width: 95%;
+                max-height: 85vh;
+            }
+            
+            .kpi-form-section {
+                padding: 12px;
+            }
+            
+            .kpi-modal-footer {
+                padding: 12px 16px;
+            }
+            
+            .metric-field-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            /* Initiative 모달 */
+            #initiativeModal .modal-box {
+                width: 95%;
+                padding: 16px;
+            }
+
+            /* 버튼 */
+            .btn {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+            
+            .btn-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            /* 토스트 */
+            .toast {
+                left: 16px;
+                right: 16px;
+                transform: translateY(80px);
+                width: auto;
+            }
+            
+            .toast.show {
+                transform: translateY(0);
+            }
+
+            /* 자동 새로고침 표시 */
+            .auto-refresh-indicator {
+                bottom: 16px;
+                right: 16px;
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+        }
+
+        /* ========== 아주 작은 화면 (400px 이하) ========== */
+        @media (max-width: 400px) {
+            .top-slogan-bar {
+                padding: 20px 12px;
+            }
+            
+            .slogan-main {
+                font-size: 18px;
+            }
+            
+            .hero {
+                padding: 12px;
+            }
+            
+            .hero-title {
+                font-size: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            
+            .stat-card {
+                padding: 12px;
+            }
+            
+            .stat-value {
+                font-size: 24px;
+            }
+            
+            /* 차트 */
+            .card {
+                padding: 12px;
+            }
+            
+            .chart-area {
+                height: 180px;
+            }
+            
+            .donut-wrap {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .donut-value {
+                font-size: 28px;
+            }
+            
+            .donut-stat-row {
+                padding: 10px 12px;
+            }
+            
+            .donut-stat-value {
+                font-size: 16px;
+            }
+            
+            .initiative-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .period-filter {
+                flex-wrap: wrap;
+            }
+            
+            .period-select {
+                flex: 1 1 45%;
+            }
         }
 
         /* 애니메이션 */
@@ -2805,7 +3332,12 @@
                         <div class="kpi-card">
                             <div class="kpi-header">
                                 <div class="kpi-title">팀 KPI</div>
-                                <button class="btn btn-secondary" onclick="openKpiModal()" id="kpiEditBtn" style="display:none">수정</button>
+                                <div style="display:flex; gap:8px; align-items:center;">
+                                    <a href="#" id="kpiDetailLink" target="_blank" class="btn btn-primary" style="display:none; text-decoration:none; font-size:13px;">
+                                        상세 보기 🔗
+                                    </a>
+                                    <button class="btn btn-secondary" onclick="openKpiModal()" id="kpiEditBtn" style="display:none">수정</button>
+                                </div>
                             </div>
                             <div id="kpiContent"></div>
                         </div>
@@ -2896,7 +3428,7 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
                     <div>
                         <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">진행률</label>
-                        <select class="select" id="initProgress" style="width:100%;">
+                        <select class="select" id="initProgress" style="width:100%;" onchange="onProgressChange(this.value)">
                             <option value="0">0%</option>
                             <option value="10">10%</option>
                             <option value="20">20%</option>
@@ -3029,6 +3561,17 @@
                     <div class="kpi-form-items" id="kpiConditionsItems">
                         <div id="kpiConditionsList"></div>
                         <button class="btn-add-item" onclick="addConditionField()">+ 조건 추가</button>
+                    </div>
+                </div>
+
+                <!-- 대시보드 링크 (관리자 전용) -->
+                <div class="kpi-form-section" id="kpiDashboardLinkSection" style="display:none;">
+                    <div class="kpi-form-label">
+                        🔗 상세 대시보드 링크 <span style="font-size:11px; color:var(--text-tertiary); font-weight:400;">(관리자 전용)</span>
+                    </div>
+                    <input type="url" class="input" id="kpiDashboardUrlInput" placeholder="https://docs.google.com/spreadsheets/..." style="width:100%; padding:12px; font-size:14px;">
+                    <div style="font-size:12px; color:var(--text-tertiary); margin-top:6px;">
+                        구글 시트, 노션 등 팀별 상세 대시보드 링크를 입력하세요
                     </div>
                 </div>
             </div>
@@ -3361,6 +3904,49 @@
             const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
             const selectedMembers = Array.from(checkedBoxes).map(cb => cb.value);
             document.getElementById('initAssignee').value = selectedMembers.join(', ');
+        }
+
+        // 진행률 변경 시 상태 자동 변경
+        // 100% → "완료", 100% 미만 → "진행중" (완료 상태에서 변경 시)
+        function onProgressChange(value) {
+            const statusSelect = document.getElementById('initStatus');
+            const progressValue = parseInt(value);
+            
+            if (progressValue === 100) {
+                // 100%면 완료로 변경
+                statusSelect.value = '완료';
+            } else if (statusSelect.value === '완료') {
+                // 완료 상태에서 100% 미만으로 변경하면 진행중으로 복귀
+                statusSelect.value = '진행중';
+            }
+        }
+
+        // ========== 대시보드 링크 관리 (관리자 전용) ==========
+        
+        // 팀별 대시보드 링크 저장소
+        let dashboardLinks = {};
+
+        // 대시보드 링크 로드
+        function loadDashboardLinks() {
+            const saved = localStorage.getItem('netform_dashboard_links');
+            if (saved) {
+                dashboardLinks = JSON.parse(saved);
+            }
+        }
+
+        // 대시보드 링크 저장
+        function saveDashboardLinksToStorage() {
+            localStorage.setItem('netform_dashboard_links', JSON.stringify(dashboardLinks));
+        }
+
+        // URL 유효성 검사
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
         }
 
         // Initiative 저장
@@ -3960,6 +4546,9 @@
                 // Supabase 초기화
                 initSupabase();
                 
+                // 대시보드 링크 로드
+                loadDashboardLinks();
+                
                 if (supabaseClient && SupabaseConfig.enabled) {
                     // Supabase에서 데이터 로드
                     const tasksLoaded = await loadTasksFromSupabase();
@@ -4001,12 +4590,49 @@
                 document.getElementById('initiativeModal')?.addEventListener('click', e => {
                     if (e.target.id === 'initiativeModal') closeInitiativeModal();
                 });
+                
+                // 전시용 자동 복귀 기능 시작 (1분 유휴 시 메인으로)
+                startIdleTimer();
             } catch (err) {
                 console.error('초기화 에러:', err);
             }
             
             showLoading(false);
         });
+        
+        // ========== 전시용 자동 복귀 기능 (1분 유휴 시 메인 페이지로) ==========
+        let idleTimer = null;
+        const IDLE_TIMEOUT = 60000; // 1분 (60초)
+
+        function startIdleTimer() {
+            // 활동 감지 이벤트 등록
+            const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+            
+            activityEvents.forEach(event => {
+                document.addEventListener(event, resetIdleTimer, { passive: true });
+            });
+            
+            // 타이머 시작
+            resetIdleTimer();
+            console.log('⏱️ 전시 모드: 1분 유휴 시 메인 페이지로 자동 복귀');
+        }
+
+        function resetIdleTimer() {
+            // 기존 타이머 제거
+            if (idleTimer) {
+                clearTimeout(idleTimer);
+            }
+            
+            // 새 타이머 시작
+            idleTimer = setTimeout(() => {
+                // 상세 페이지에 있을 때만 메인으로 이동
+                if (curDept !== null) {
+                    console.log('⏱️ 1분 유휴 감지 → 메인 페이지로 이동');
+                    goMain();
+                    toast('🏠 메인 화면으로 돌아왔습니다');
+                }
+            }, IDLE_TIMEOUT);
+        }
         
         // 자동 새로고침 표시 추가
         function addAutoRefreshIndicator() {
@@ -4450,6 +5076,10 @@
             document.querySelectorAll('.nav-item').forEach((el, i) => el.classList.toggle('active', i === 0));
             curDept = curSub = null;
             calcAll();
+            
+            // 페이지 맨 위로 스크롤 (모바일 대응)
+            window.scrollTo(0, 0);
+            document.querySelector('.main')?.scrollTo(0, 0);
         }
 
         async function showDetail(deptId, subId = null) {
@@ -4473,6 +5103,10 @@
             updateTeamProgressBar(); // 선택된 팀 진척률 업데이트
             renderKpiSection(); 
             await loadAndRenderInitiatives();
+            
+            // 페이지 맨 위로 스크롤 (모바일 대응)
+            window.scrollTo(0, 0);
+            document.querySelector('.main')?.scrollTo(0, 0);
         }
 
         // 선택된 팀 진척률 바 업데이트
@@ -4997,6 +5631,7 @@
             const kpi = kpiData[curSub];
             const contentEl = document.getElementById('kpiContent');
             const editBtn = document.getElementById('kpiEditBtn');
+            const detailLink = document.getElementById('kpiDetailLink');
 
             // 현재 팀 이름 찾기
             let teamName = '';
@@ -5007,6 +5642,17 @@
 
             // 권한 체크
             const canEdit = canEditTeam(curSub);
+            const isAdmin = currentUser && currentUser.isAdmin;
+
+            // 대시보드 상세보기 버튼 (관리자만 + 링크 있을 때만)
+            const dashboardUrl = dashboardLinks[curSub];
+            
+            if (isAdmin && dashboardUrl) {
+                detailLink.href = dashboardUrl;
+                detailLink.style.display = 'inline-flex';
+            } else {
+                detailLink.style.display = 'none';
+            }
 
             if (!kpi || !kpi.mission) {
                 // KPI가 없는 경우
@@ -5095,9 +5741,11 @@
 
                 // 조건 리스트 (있으면 표시)
                 if (kpi.conditions && kpi.conditions.length > 0) {
+                    const isGrowth = curSub === 'growth';
+                    const conditionTitle = isGrowth ? '이니셔티브 선정 조건' : 'KPI 선정 조건';
                     html += `
                         <div class="kpi-conditions">
-                            <div class="kpi-conditions-title">이니셔티브 선정 조건</div>
+                            <div class="kpi-conditions-title">${conditionTitle}</div>
                     `;
                     kpi.conditions.forEach(c => {
                         html += `
@@ -5184,6 +5832,16 @@
             document.getElementById('kpiConditionsToggle').checked = hasConditions;
             document.getElementById('kpiConditionsItems').classList.toggle('show', hasConditions);
             renderConditionFields(kpi.conditions || []);
+
+            // 대시보드 링크 섹션 (관리자만 표시)
+            const isAdmin = currentUser && currentUser.isAdmin;
+            const linkSection = document.getElementById('kpiDashboardLinkSection');
+            if (isAdmin) {
+                linkSection.style.display = 'block';
+                document.getElementById('kpiDashboardUrlInput').value = dashboardLinks[curSub] || '';
+            } else {
+                linkSection.style.display = 'none';
+            }
 
             document.getElementById('kpiModal').classList.add('show');
         }
@@ -5366,6 +6024,18 @@
                 // localStorage에 저장
                 kpiData[curSub] = kpiInfo;
                 saveKpiDataToStorage();
+            }
+
+            // 대시보드 링크 저장 (관리자만)
+            const isAdmin = currentUser && currentUser.isAdmin;
+            if (isAdmin) {
+                const dashboardUrl = document.getElementById('kpiDashboardUrlInput').value.trim();
+                if (dashboardUrl && !isValidUrl(dashboardUrl)) {
+                    alert('올바른 URL 형식을 입력해주세요.');
+                    return;
+                }
+                dashboardLinks[curSub] = dashboardUrl;
+                saveDashboardLinksToStorage();
             }
             
             closeKpiModal();

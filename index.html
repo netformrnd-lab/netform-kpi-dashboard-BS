@@ -4286,6 +4286,7 @@
                         mainMetrics: kpi.main_metrics || [],
                         subMetrics: kpi.sub_metrics || [],
                         conditions: kpi.conditions || [],
+                        dashboardUrl: kpi.dashboard_url || '',
                         updated_at: kpi.updated_at,
                         updated_by: kpi.updated_by
                     };
@@ -4312,6 +4313,7 @@
                         sub_metrics: kpiInfo.subMetrics || [],
                         metrics: [], // 레거시 필드 (호환성)
                         conditions: kpiInfo.conditions,
+                        dashboard_url: kpiInfo.dashboardUrl || null,
                         updated_at: new Date().toISOString(),
                         updated_by: CURRENT_USER
                     }, { onConflict: 'sub_dept_id' });
@@ -5645,7 +5647,7 @@
             const isAdmin = currentUser && currentUser.isAdmin;
 
             // 대시보드 상세보기 버튼 (관리자만 + 링크 있을 때만)
-            const dashboardUrl = dashboardLinks[curSub];
+            const dashboardUrl = kpi?.dashboardUrl || '';
             
             if (isAdmin && dashboardUrl) {
                 detailLink.href = dashboardUrl;
@@ -5838,7 +5840,7 @@
             const linkSection = document.getElementById('kpiDashboardLinkSection');
             if (isAdmin) {
                 linkSection.style.display = 'block';
-                document.getElementById('kpiDashboardUrlInput').value = dashboardLinks[curSub] || '';
+                document.getElementById('kpiDashboardUrlInput').value = kpi.dashboardUrl || '';
             } else {
                 linkSection.style.display = 'none';
             }
@@ -6011,8 +6013,19 @@
                 });
             }
 
-            // 저장
-            const kpiInfo = { mission, mainMetrics, subMetrics, conditions };
+            // 대시보드 링크 수집 (관리자만)
+            let dashboardUrl = '';
+            const isAdmin = currentUser && currentUser.isAdmin;
+            if (isAdmin) {
+                dashboardUrl = document.getElementById('kpiDashboardUrlInput').value.trim();
+                if (dashboardUrl && !isValidUrl(dashboardUrl)) {
+                    alert('올바른 URL 형식을 입력해주세요.');
+                    return;
+                }
+            }
+
+            // 저장 (dashboardUrl 포함)
+            const kpiInfo = { mission, mainMetrics, subMetrics, conditions, dashboardUrl };
             
             if (supabaseClient && SupabaseConfig.enabled) {
                 // Supabase에 저장
@@ -6024,18 +6037,11 @@
                 // localStorage에 저장
                 kpiData[curSub] = kpiInfo;
                 saveKpiDataToStorage();
-            }
-
-            // 대시보드 링크 저장 (관리자만)
-            const isAdmin = currentUser && currentUser.isAdmin;
-            if (isAdmin) {
-                const dashboardUrl = document.getElementById('kpiDashboardUrlInput').value.trim();
-                if (dashboardUrl && !isValidUrl(dashboardUrl)) {
-                    alert('올바른 URL 형식을 입력해주세요.');
-                    return;
+                // localStorage 모드에서도 링크 저장
+                if (isAdmin) {
+                    dashboardLinks[curSub] = dashboardUrl;
+                    saveDashboardLinksToStorage();
                 }
-                dashboardLinks[curSub] = dashboardUrl;
-                saveDashboardLinksToStorage();
             }
             
             closeKpiModal();

@@ -2924,21 +2924,33 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
             }
+
+            .stats-grid-5 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid-5 .stat-card:first-child {
+                grid-column: 1 / -1;
+            }
             
             .stat-card {
                 padding: 16px;
             }
             
             .stat-value {
-                font-size: 28px;
+                font-size: 24px;
             }
             
             .stat-label {
-                font-size: 12px;
+                font-size: 11px;
             }
 
             /* 콘텐츠 영역 */
             .content {
+                padding: 16px;
+            }
+
+            .content-compact {
                 padding: 16px;
             }
             
@@ -2968,6 +2980,89 @@
             
             .dept-pct {
                 font-size: 24px;
+            }
+
+            /* 부서별 현황 통합 (모바일) */
+            .dept-unified-donut {
+                padding: 20px 16px;
+            }
+
+            .dept-unified-header {
+                font-size: 18px;
+                margin-bottom: 16px;
+            }
+
+            .dept-unified-content {
+                flex-direction: column;
+                align-items: center;
+                gap: 24px;
+            }
+
+            .unified-donut-chart {
+                width: 140px;
+                height: 140px;
+            }
+
+            .unified-donut-bg,
+            .unified-donut-segment {
+                stroke-width: 14;
+            }
+
+            .unified-donut-pct {
+                font-size: 32px;
+            }
+
+            .unified-donut-label {
+                font-size: 12px;
+            }
+
+            .unified-donut-legend {
+                width: 100%;
+                gap: 8px;
+            }
+
+            .legend-item {
+                padding: 12px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .legend-left {
+                width: 100%;
+                gap: 8px;
+            }
+
+            .legend-color {
+                width: 8px;
+                height: 8px;
+            }
+
+            .legend-name {
+                font-size: 14px;
+            }
+
+            .legend-leader {
+                font-size: 12px;
+            }
+
+            .legend-center {
+                display: none;
+            }
+
+            .legend-right {
+                width: 100%;
+                justify-content: flex-end;
+                gap: 12px;
+            }
+
+            .legend-pct {
+                font-size: 16px;
+                min-width: 40px;
+            }
+
+            .legend-kpi {
+                font-size: 12px;
+                min-width: auto;
             }
 
             /* 차트 그리드 */
@@ -3235,6 +3330,81 @@
             .kpi-modal .modal-box {
                 width: 95%;
                 max-height: 85vh;
+            }
+
+            /* 통계 모달 모바일 */
+            .stat-modal .modal-box {
+                width: 95%;
+                max-width: none;
+                margin: 16px;
+            }
+
+            .stat-modal-header {
+                padding: 16px;
+            }
+
+            .stat-modal-title {
+                font-size: 18px;
+            }
+
+            .stat-modal-body {
+                padding: 16px;
+                max-height: 65vh;
+            }
+
+            .stat-team-header {
+                padding: 12px 14px;
+            }
+
+            .stat-team-name {
+                font-size: 14px;
+            }
+
+            .stat-team-count {
+                font-size: 13px;
+            }
+
+            .stat-subteam-section {
+                margin-left: 8px;
+            }
+
+            .stat-subteam-header {
+                padding: 10px 12px;
+            }
+
+            .stat-subteam-name {
+                font-size: 13px;
+            }
+
+            .stat-kpi-item {
+                padding: 10px 12px;
+            }
+
+            .stat-kpi-name {
+                font-size: 13px;
+            }
+
+            .stat-kpi-progress {
+                font-size: 14px;
+                min-width: 50px;
+            }
+
+            .stat-member-item {
+                padding: 10px 12px;
+            }
+
+            .stat-member-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .stat-member-name {
+                font-size: 13px;
+            }
+
+            .stat-member-role {
+                font-size: 11px;
             }
             
             .kpi-form-section {

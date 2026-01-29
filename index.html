@@ -1016,13 +1016,13 @@
         .dept-unified-content {
             display: flex;
             align-items: center;
-            gap: 56px;
+            gap: 48px;
         }
 
         .unified-donut-chart {
             position: relative;
-            width: 240px;
-            height: 240px;
+            width: 180px;
+            height: 180px;
             flex-shrink: 0;
         }
 
@@ -1035,12 +1035,12 @@
         .unified-donut-bg {
             fill: none;
             stroke: #e2e8f0;
-            stroke-width: 22;
+            stroke-width: 18;
         }
 
         .unified-donut-segment {
             fill: none;
-            stroke-width: 22;
+            stroke-width: 18;
             stroke-linecap: round;
             transition: stroke-dashoffset 1s ease-out;
         }
@@ -1054,16 +1054,16 @@
         }
 
         .unified-donut-pct {
-            font-size: 52px;
+            font-size: 42px;
             font-weight: 800;
             color: var(--text-primary);
             line-height: 1;
         }
 
         .unified-donut-label {
-            font-size: 15px;
+            font-size: 13px;
             color: var(--text-tertiary);
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         .unified-donut-legend {
@@ -2582,6 +2582,58 @@
             display: block;
         }
 
+        /* 서브팀 (팀별) 아코디언 */
+        .stat-subteam-section {
+            margin-bottom: 6px;
+            margin-left: 12px;
+        }
+
+        .stat-subteam-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--bg);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .stat-subteam-header:hover {
+            background: var(--border-light);
+        }
+
+        .stat-subteam-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s ease;
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+
+        .stat-subteam-header.open .arrow {
+            transform: rotate(180deg);
+        }
+
+        .stat-subteam-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-subteam-count {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .stat-subteam-content {
+            display: none;
+            padding: 6px 0 6px 12px;
+        }
+
+        .stat-subteam-content.open {
+            display: block;
+        }
+
         .stat-kpi-item {
             display: flex;
             align-items: center;
@@ -4049,7 +4101,7 @@
                             <div class="stat-value stat-delayed" id="statDelayed">0</div>
                         </div>
                         <div class="stat-card stat-card-glass stat-clickable" onclick="openStatModal('done')">
-                            <div class="stat-label">달성 KPI</div>
+                            <div class="stat-label">활성화 KPI</div>
                             <div class="stat-value" id="statDone">0</div>
                         </div>
                         <div class="stat-card stat-card-glass stat-clickable" onclick="openStatModal('total')">
@@ -5760,7 +5812,7 @@
             const deptData = [];
             let teamsWithKpi = 0;
             let totalMainKpis = 0;
-            let completedMainKpis = 0;
+            let activeMainKpis = 0; // 50% 이상 KPI
             let delayedMainKpis = 0; // 50% 미만 KPI
 
             ORG.departments.forEach(d => {
@@ -5774,7 +5826,7 @@
                         deptTeamsWithKpi++;
                         teamsWithKpi++;
 
-                        // 메인 KPI 완료/지연 카운트
+                        // 메인 KPI 활성화/지연 카운트
                         const kpi = kpiData[s.id];
                         if (kpi && kpi.mainMetrics) {
                             kpi.mainMetrics.forEach(m => {
@@ -5782,8 +5834,8 @@
                                 const current = parseFloat(m.value) || 0;
                                 const target = parseFloat(m.target) || 1;
                                 const pct = Math.round((current / target) * 100);
-                                if (pct >= 100) completedMainKpis++;
-                                else if (pct < 50) delayedMainKpis++;
+                                if (pct >= 50) activeMainKpis++;
+                                else delayedMainKpis++;
                             });
                         }
                     }
@@ -5815,7 +5867,7 @@
             // 통계 업데이트
             document.getElementById('statDeadline').textContent = 'D-' + diffDays;
             document.getElementById('statDelayed').textContent = delayedMainKpis;
-            document.getElementById('statDone').textContent = completedMainKpis;
+            document.getElementById('statDone').textContent = activeMainKpis;
             document.getElementById('statTotal').textContent = totalMainKpis;
             document.getElementById('statMembers').textContent = totalMembers;
 
@@ -6893,7 +6945,7 @@
                 title.textContent = '지연 KPI (50% 미만)';
                 html = renderDelayedKpis(colors);
             } else if (type === 'done') {
-                title.textContent = '달성 KPI (100% 완료)';
+                title.textContent = '활성화 KPI (50% 이상)';
                 html = renderDoneKpis(colors);
             } else if (type === 'total') {
                 title.textContent = '전체 메인 KPI';
@@ -6925,6 +6977,14 @@
             content.classList.toggle('open');
         }
         
+        function toggleSubTeamSection(event, el) {
+            event.stopPropagation(); // 부모 클릭 이벤트 방지
+            const header = el;
+            const content = header.nextElementSibling;
+            header.classList.toggle('open');
+            content.classList.toggle('open');
+        }
+        
         function goToTeamKpi(deptId, subId) {
             closeStatModal();
             showDetail(deptId, subId);
@@ -6935,11 +6995,13 @@
             let hasDelayed = false;
             
             ORG.departments.forEach((d, dIdx) => {
-                let teamKpis = [];
+                // 부서별로 팀 데이터 수집
+                let deptTeams = [];
                 
                 d.subDepts.forEach(s => {
                     const kpi = kpiData[s.id];
                     if (kpi && kpi.mainMetrics) {
+                        let teamKpis = [];
                         kpi.mainMetrics.forEach((m, mIdx) => {
                             const current = parseFloat(m.value) || 0;
                             const target = parseFloat(m.target) || 1;
@@ -6947,9 +7009,6 @@
                             if (pct < 50) {
                                 const kpiName = m.label || m.name || `KPI ${mIdx + 1}`;
                                 teamKpis.push({ 
-                                    team: s.name, 
-                                    teamId: s.id,
-                                    deptId: d.id,
                                     name: kpiName, 
                                     pct,
                                     current,
@@ -6959,23 +7018,43 @@
                                 hasDelayed = true;
                             }
                         });
+                        if (teamKpis.length > 0) {
+                            deptTeams.push({
+                                team: s.name,
+                                teamId: s.id,
+                                deptId: d.id,
+                                kpis: teamKpis
+                            });
+                        }
                     }
                 });
                 
-                if (teamKpis.length > 0) {
+                if (deptTeams.length > 0) {
+                    const totalKpis = deptTeams.reduce((sum, t) => sum + t.kpis.length, 0);
                     html += `
                         <div class="stat-team-section">
                             <div class="stat-team-header" onclick="toggleTeamSection(this)">
                                 <div class="stat-team-color" style="background: ${colors[dIdx % colors.length]}"></div>
                                 <span class="stat-team-name">${d.name}</span>
-                                <span class="stat-team-count">${teamKpis.length}개</span>
+                                <span class="stat-team-count">${totalKpis}개</span>
                                 <span class="arrow">▼</span>
                             </div>
                             <div class="stat-team-content">
-                                ${teamKpis.map(k => `
-                                    <div class="stat-kpi-item" onclick="goToTeamKpi('${k.deptId}', '${k.teamId}')">
-                                        <span class="stat-kpi-name">[${k.team}] ${k.name} (${k.current}/${k.target}${k.unit})</span>
-                                        <span class="stat-kpi-progress delayed">${k.pct}%</span>
+                                ${deptTeams.map(t => `
+                                    <div class="stat-subteam-section">
+                                        <div class="stat-subteam-header" onclick="toggleSubTeamSection(event, this)">
+                                            <span class="stat-subteam-name">${t.team}</span>
+                                            <span class="stat-subteam-count">${t.kpis.length}개</span>
+                                            <span class="arrow">▼</span>
+                                        </div>
+                                        <div class="stat-subteam-content">
+                                            ${t.kpis.map(k => `
+                                                <div class="stat-kpi-item" onclick="goToTeamKpi('${t.deptId}', '${t.teamId}')">
+                                                    <span class="stat-kpi-name">${k.name} (${k.current}/${k.target}${k.unit})</span>
+                                                    <span class="stat-kpi-progress delayed">${k.pct}%</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
                                     </div>
                                 `).join('')}
                             </div>
@@ -6993,50 +7072,69 @@
         
         function renderDoneKpis(colors) {
             let html = '';
-            let hasDone = false;
+            let hasActive = false;
             
             ORG.departments.forEach((d, dIdx) => {
-                let teamKpis = [];
+                // 부서별로 팀 데이터 수집
+                let deptTeams = [];
                 
                 d.subDepts.forEach(s => {
                     const kpi = kpiData[s.id];
                     if (kpi && kpi.mainMetrics) {
+                        let teamKpis = [];
                         kpi.mainMetrics.forEach((m, mIdx) => {
                             const current = parseFloat(m.value) || 0;
                             const target = parseFloat(m.target) || 1;
                             const pct = Math.round((current / target) * 100);
-                            if (pct >= 100) {
+                            if (pct >= 50) {
                                 const kpiName = m.label || m.name || `KPI ${mIdx + 1}`;
                                 teamKpis.push({ 
-                                    team: s.name,
-                                    teamId: s.id,
-                                    deptId: d.id,
                                     name: kpiName, 
                                     pct,
                                     current,
                                     target,
                                     unit: m.unit || ''
                                 });
-                                hasDone = true;
+                                hasActive = true;
                             }
                         });
+                        if (teamKpis.length > 0) {
+                            deptTeams.push({
+                                team: s.name,
+                                teamId: s.id,
+                                deptId: d.id,
+                                kpis: teamKpis
+                            });
+                        }
                     }
                 });
                 
-                if (teamKpis.length > 0) {
+                if (deptTeams.length > 0) {
+                    const totalKpis = deptTeams.reduce((sum, t) => sum + t.kpis.length, 0);
                     html += `
                         <div class="stat-team-section">
                             <div class="stat-team-header" onclick="toggleTeamSection(this)">
                                 <div class="stat-team-color" style="background: ${colors[dIdx % colors.length]}"></div>
                                 <span class="stat-team-name">${d.name}</span>
-                                <span class="stat-team-count">${teamKpis.length}개</span>
+                                <span class="stat-team-count">${totalKpis}개</span>
                                 <span class="arrow">▼</span>
                             </div>
                             <div class="stat-team-content">
-                                ${teamKpis.map(k => `
-                                    <div class="stat-kpi-item" onclick="goToTeamKpi('${k.deptId}', '${k.teamId}')">
-                                        <span class="stat-kpi-name">[${k.team}] ${k.name} (${k.current}/${k.target}${k.unit})</span>
-                                        <span class="stat-kpi-progress done">✓ ${k.pct}%</span>
+                                ${deptTeams.map(t => `
+                                    <div class="stat-subteam-section">
+                                        <div class="stat-subteam-header" onclick="toggleSubTeamSection(event, this)">
+                                            <span class="stat-subteam-name">${t.team}</span>
+                                            <span class="stat-subteam-count">${t.kpis.length}개</span>
+                                            <span class="arrow">▼</span>
+                                        </div>
+                                        <div class="stat-subteam-content">
+                                            ${t.kpis.map(k => `
+                                                <div class="stat-kpi-item" onclick="goToTeamKpi('${t.deptId}', '${t.teamId}')">
+                                                    <span class="stat-kpi-name">${k.name} (${k.current}/${k.target}${k.unit})</span>
+                                                    <span class="stat-kpi-progress ${k.pct >= 100 ? 'done' : ''}">${k.pct >= 100 ? '✓ ' : ''}${k.pct}%</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
                                     </div>
                                 `).join('')}
                             </div>
@@ -7045,8 +7143,8 @@
                 }
             });
             
-            if (!hasDone) {
-                html = `<div class="stat-empty"><div class="stat-empty-icon">📊</div><div>달성된 KPI가 없습니다</div></div>`;
+            if (!hasActive) {
+                html = `<div class="stat-empty"><div class="stat-empty-icon">📊</div><div>활성화된 KPI가 없습니다</div></div>`;
             }
             
             return html;
@@ -7057,45 +7155,64 @@
             let hasKpi = false;
             
             ORG.departments.forEach((d, dIdx) => {
-                let teamKpis = [];
+                // 부서별로 팀 데이터 수집
+                let deptTeams = [];
                 
                 d.subDepts.forEach(s => {
                     const kpi = kpiData[s.id];
-                    if (kpi && kpi.mainMetrics) {
+                    if (kpi && kpi.mainMetrics && kpi.mainMetrics.length > 0) {
+                        let teamKpis = [];
                         kpi.mainMetrics.forEach((m, mIdx) => {
                             const current = parseFloat(m.value) || 0;
                             const target = parseFloat(m.target) || 1;
                             const pct = Math.round((current / target) * 100);
                             const kpiName = m.label || m.name || `KPI ${mIdx + 1}`;
                             teamKpis.push({ 
-                                team: s.name,
-                                teamId: s.id,
-                                deptId: d.id,
                                 name: kpiName, 
-                                pct, 
-                                current, 
-                                target, 
-                                unit: m.unit || '' 
+                                pct,
+                                current,
+                                target,
+                                unit: m.unit || ''
                             });
                             hasKpi = true;
                         });
+                        if (teamKpis.length > 0) {
+                            deptTeams.push({
+                                team: s.name,
+                                teamId: s.id,
+                                deptId: d.id,
+                                kpis: teamKpis
+                            });
+                        }
                     }
                 });
                 
-                if (teamKpis.length > 0) {
+                if (deptTeams.length > 0) {
+                    const totalKpis = deptTeams.reduce((sum, t) => sum + t.kpis.length, 0);
                     html += `
                         <div class="stat-team-section">
                             <div class="stat-team-header" onclick="toggleTeamSection(this)">
                                 <div class="stat-team-color" style="background: ${colors[dIdx % colors.length]}"></div>
                                 <span class="stat-team-name">${d.name}</span>
-                                <span class="stat-team-count">${teamKpis.length}개</span>
+                                <span class="stat-team-count">${totalKpis}개</span>
                                 <span class="arrow">▼</span>
                             </div>
                             <div class="stat-team-content">
-                                ${teamKpis.map(k => `
-                                    <div class="stat-kpi-item" onclick="goToTeamKpi('${k.deptId}', '${k.teamId}')">
-                                        <span class="stat-kpi-name">[${k.team}] ${k.name} (${k.current}/${k.target}${k.unit})</span>
-                                        <span class="stat-kpi-progress ${k.pct >= 100 ? 'done' : k.pct < 50 ? 'delayed' : ''}">${k.pct}%</span>
+                                ${deptTeams.map(t => `
+                                    <div class="stat-subteam-section">
+                                        <div class="stat-subteam-header" onclick="toggleSubTeamSection(event, this)">
+                                            <span class="stat-subteam-name">${t.team}</span>
+                                            <span class="stat-subteam-count">${t.kpis.length}개</span>
+                                            <span class="arrow">▼</span>
+                                        </div>
+                                        <div class="stat-subteam-content">
+                                            ${t.kpis.map(k => `
+                                                <div class="stat-kpi-item" onclick="goToTeamKpi('${t.deptId}', '${t.teamId}')">
+                                                    <span class="stat-kpi-name">${k.name} (${k.current}/${k.target}${k.unit})</span>
+                                                    <span class="stat-kpi-progress ${k.pct >= 100 ? 'done' : k.pct < 50 ? 'delayed' : ''}">${k.pct}%</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
                                     </div>
                                 `).join('')}
                             </div>
@@ -7116,40 +7233,59 @@
             let hasMembers = false;
             
             ORG.departments.forEach((d, dIdx) => {
-                let teamMembers = [];
+                // 부서별로 팀 데이터 수집
+                let deptTeams = [];
                 
                 d.subDepts.forEach(s => {
                     const kpi = kpiData[s.id];
                     if (kpi && kpi.mainMetrics && kpi.mainMetrics.length > 0) {
+                        let teamMembers = [];
                         s.members.forEach(m => {
                             teamMembers.push({ 
-                                team: s.name, 
-                                teamId: s.id,
-                                deptId: d.id,
                                 name: m.name, 
                                 role: m.role || '팀원' 
                             });
                             hasMembers = true;
                         });
+                        if (teamMembers.length > 0) {
+                            deptTeams.push({
+                                team: s.name,
+                                teamId: s.id,
+                                deptId: d.id,
+                                members: teamMembers
+                            });
+                        }
                     }
                 });
                 
-                if (teamMembers.length > 0) {
+                if (deptTeams.length > 0) {
+                    const totalMembers = deptTeams.reduce((sum, t) => sum + t.members.length, 0);
                     html += `
                         <div class="stat-team-section">
                             <div class="stat-team-header" onclick="toggleTeamSection(this)">
                                 <div class="stat-team-color" style="background: ${colors[dIdx % colors.length]}"></div>
                                 <span class="stat-team-name">${d.name}</span>
-                                <span class="stat-team-count">${teamMembers.length}명</span>
+                                <span class="stat-team-count">${totalMembers}명</span>
                                 <span class="arrow">▼</span>
                             </div>
                             <div class="stat-team-content">
-                                ${teamMembers.map(m => `
-                                    <div class="stat-member-item" onclick="goToTeamKpi('${m.deptId}', '${m.teamId}')" style="cursor: pointer;">
-                                        <div class="stat-member-avatar">${m.name.slice(-2)}</div>
-                                        <div class="stat-member-info">
-                                            <div class="stat-member-name">${m.name}</div>
-                                            <div class="stat-member-role">${m.team} · ${m.role}</div>
+                                ${deptTeams.map(t => `
+                                    <div class="stat-subteam-section">
+                                        <div class="stat-subteam-header" onclick="toggleSubTeamSection(event, this)">
+                                            <span class="stat-subteam-name">${t.team}</span>
+                                            <span class="stat-subteam-count">${t.members.length}명</span>
+                                            <span class="arrow">▼</span>
+                                        </div>
+                                        <div class="stat-subteam-content">
+                                            ${t.members.map(m => `
+                                                <div class="stat-member-item" onclick="goToTeamKpi('${t.deptId}', '${t.teamId}')" style="cursor: pointer;">
+                                                    <div class="stat-member-avatar">${m.name.slice(-2)}</div>
+                                                    <div class="stat-member-info">
+                                                        <div class="stat-member-name">${m.name}</div>
+                                                        <div class="stat-member-role">${m.role}</div>
+                                                    </div>
+                                                </div>
+                                            `).join('')}
                                         </div>
                                     </div>
                                 `).join('')}

@@ -123,15 +123,15 @@
             display: block;
         }
 
-        /* ========== 사이드바 ========== */
+        /* ========== 사이드바 (다크 네이비) ========== */
         .sidebar {
             width: 240px;
             min-width: 240px;
-            background: var(--bg-elevated);
+            background: #0f172a;
             padding: 24px 16px;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid var(--border);
+            border-right: none;
             position: sticky;
             top: 0;
             height: 100vh;
@@ -142,7 +142,7 @@
             align-items: center;
             gap: 12px;
             padding: 0 12px 24px;
-            border-bottom: 1px solid var(--border-light);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             margin-bottom: 24px;
         }
 
@@ -172,14 +172,14 @@
         .logo-text {
             font-size: 15px;
             font-weight: 700;
-            color: var(--text-primary);
+            color: white;
         }
 
         .logo-text span {
             display: block;
             font-size: 11px;
             font-weight: 500;
-            color: var(--text-tertiary);
+            color: rgba(255,255,255,0.6);
             margin-top: 2px;
         }
 
@@ -188,7 +188,7 @@
         .nav-label {
             font-size: 11px;
             font-weight: 600;
-            color: var(--text-tertiary);
+            color: rgba(255,255,255,0.4);
             padding: 0 12px;
             margin-bottom: 8px;
             text-transform: uppercase;
@@ -205,18 +205,18 @@
             transition: all 0.15s ease;
             font-size: 14px;
             font-weight: 500;
-            color: var(--text-secondary);
+            color: rgba(255,255,255,0.7);
             margin-bottom: 2px;
         }
 
         .nav-item:hover {
-            background: var(--bg);
-            color: var(--text-primary);
+            background: rgba(255,255,255,0.1);
+            color: white;
         }
 
         .nav-item.active {
-            background: var(--blue-light);
-            color: var(--blue);
+            background: #3B82F6;
+            color: white;
             font-weight: 600;
         }
 
@@ -415,6 +415,216 @@
             border-bottom: 1px solid var(--border);
         }
 
+        /* 새로운 그라데이션 히어로 스타일 */
+        .hero-gradient {
+            background: var(--bg-elevated);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-light);
+            border-radius: 0;
+            padding: 24px 48px;
+        }
+
+        .hero-gradient::before {
+            display: none;
+        }
+
+        .hero-gradient::after {
+            display: none;
+        }
+
+        /* 추가 물결 레이어 */
+        .hero-wave-layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.05)' d='M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,90.7C672,85,768,107,864,128C960,149,1056,171,1152,165.3C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+            background-position: bottom;
+            pointer-events: none;
+        }
+
+        .hero-gradient .hero-top {
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .hero-gradient .hero-title {
+            color: var(--text-primary);
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-gradient .hero-slogan {
+            color: var(--text-secondary);
+            font-size: 22px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        .hero-gradient .hero-slogan .highlight {
+            color: #3B82F6;
+            font-weight: 700;
+        }
+
+        .hero-gradient .hero-actions {
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        /* 진행률 섹션 */
+        .hero-progress-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--bg);
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+        }
+
+        .hero-progress-dark {
+            background: var(--bg);
+        }
+
+        .hero-progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1e293b;
+            font-size: 15px;
+        }
+
+        .hero-progress-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .hero-progress-current {
+            font-size: 28px;
+            font-weight: 800;
+            color: #3B82F6;
+        }
+
+        .hero-progress-arrow {
+            color: #94a3b8;
+            font-size: 18px;
+        }
+
+        .hero-progress-target {
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .hero-progress-bar {
+            width: 160px;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .hero-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3B82F6, #06B6D4);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .hero-progress-badge {
+            background: linear-gradient(135deg, #3B82F6, #06B6D4);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .hero-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-gradient .period-select {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .hero-gradient .period-select option {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .hero-gradient .login-status {
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+
+        .hero-gradient .login-status-text {
+            color: var(--text-primary);
+        }
+
+        .hero-gradient .theme-toggle {
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+
+        .hero-gradient .btn-secondary {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        /* 스탯 카드 */
+        .hero-gradient .stats-grid {
+            position: relative;
+            z-index: 1;
+            margin-top: 16px;
+        }
+
+        .stat-card-glass {
+            background: var(--bg);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card-glass:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card-glass .stat-value {
+            color: var(--text-primary);
+            font-size: 32px;
+        }
+
+        /* 다크모드 히어로 */
+        [data-theme="dark"] .hero-gradient {
+            background: var(--bg-elevated);
+        }
+
+        [data-theme="dark"] .stat-card-glass {
+            background: var(--bg);
+        }
+
+        [data-theme="dark"] .stat-card-glass .stat-value {
+            color: var(--text-primary);
+        }
+
         .hero-top {
             display: flex;
             justify-content: space-between;
@@ -547,10 +757,31 @@
             gap: 16px;
         }
 
+        .stats-grid-5 {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .stat-clickable {
+            cursor: pointer;
+        }
+
+        .stat-clickable:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-deadline {
+            color: #3B82F6 !important;
+        }
+
+        .stat-delayed {
+            color: #191f28 !important;
+        }
+
         .stat-card {
             background: var(--bg);
             border-radius: var(--radius-md);
-            padding: 24px;
+            padding: 20px 24px;
             transition: all 0.2s ease;
         }
 
@@ -566,7 +797,7 @@
         }
 
         .stat-value {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 800;
             color: var(--text-primary);
             letter-spacing: -1px;
@@ -592,6 +823,10 @@
         /* ========== 콘텐츠 ========== */
         .content {
             padding: 32px 48px;
+        }
+
+        .content-compact {
+            padding: 20px 48px;
         }
 
         .section {
@@ -750,6 +985,390 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 16px;
+        }
+
+        /* 통합 도넛 차트 레이아웃 (Nakapin 스타일) */
+        .section-compact {
+            margin-bottom: 24px;
+        }
+
+        .section-compact .section-header {
+            margin-bottom: 16px;
+        }
+
+        .dept-unified-donut {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-elevated);
+            border-radius: 20px;
+            padding: 28px 36px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .dept-unified-header {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 28px;
+        }
+
+        .dept-unified-content {
+            display: flex;
+            align-items: center;
+            gap: 56px;
+        }
+
+        .unified-donut-chart {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            flex-shrink: 0;
+        }
+
+        .unified-donut-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .unified-donut-bg {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 22;
+        }
+
+        .unified-donut-segment {
+            fill: none;
+            stroke-width: 22;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .unified-donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .unified-donut-pct {
+            font-size: 52px;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .unified-donut-label {
+            font-size: 15px;
+            color: var(--text-tertiary);
+            margin-top: 6px;
+        }
+
+        .unified-donut-legend {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            background: var(--bg);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .legend-item:hover {
+            background: var(--blue-light);
+        }
+
+        .legend-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .legend-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .legend-leader {
+            font-size: 14px;
+            color: #64748b;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+
+        .legend-center {
+            flex: 1;
+            padding: 0 24px;
+            min-width: 150px;
+        }
+
+        .legend-progress-bar {
+            height: 14px;
+            background: #d1d5db;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        .legend-progress-fill {
+            height: 100%;
+            border-radius: 7px;
+            transition: width 0.8s ease;
+        }
+
+        .legend-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 150px;
+            flex-shrink: 0;
+            justify-content: flex-end;
+        }
+
+        .legend-pct {
+            font-size: 20px;
+            font-weight: 700;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .legend-kpi {
+            font-size: 14px;
+            color: #64748b;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        /* 반응형 - 통합 도넛 */
+        @media (max-width: 1200px) {
+            .legend-left {
+                width: 240px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .dept-unified-donut {
+                padding: 24px;
+            }
+            .dept-unified-content {
+                flex-direction: column;
+                gap: 24px;
+            }
+            .unified-donut-chart {
+                width: 160px;
+                height: 160px;
+            }
+            .unified-donut-pct {
+                font-size: 32px;
+            }
+            .legend-left {
+                width: 200px;
+            }
+            .legend-center {
+                flex: 1;
+                padding: 0 12px;
+                min-width: 100px;
+            }
+            .legend-progress-bar {
+                height: 10px;
+            }
+            .legend-right {
+                width: 110px;
+            }
+        }
+
+        /* 부서별 도넛 그리드 - 새로운 스타일 */
+        .dept-donut-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .dept-donut-card {
+            background: var(--bg-elevated);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .dept-donut-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+            border-color: var(--blue);
+        }
+
+        .dept-donut-wrap {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 16px;
+        }
+
+        .dept-donut-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .dept-donut-bg {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 8;
+        }
+
+        .dept-donut-progress {
+            fill: none;
+            stroke: var(--blue);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 251.2;
+            stroke-dashoffset: 251.2;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .dept-donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .dept-donut-pct {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--blue);
+            line-height: 1;
+        }
+
+        .dept-donut-info {
+            width: 100%;
+        }
+
+        .dept-donut-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .dept-donut-leader {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+        }
+
+        .dept-donut-meta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .dept-donut-kpi-count {
+            background: var(--blue-light);
+            color: var(--blue);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .dept-donut-edit {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 부서 색상 */
+        .dept-donut-card[data-color="blue"] .dept-donut-progress { stroke: #3B82F6; }
+        .dept-donut-card[data-color="blue"] .dept-donut-pct { color: #3B82F6; }
+        .dept-donut-card[data-color="blue"] .dept-donut-kpi-count { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+
+        .dept-donut-card[data-color="green"] .dept-donut-progress { stroke: #10B981; }
+        .dept-donut-card[data-color="green"] .dept-donut-pct { color: #10B981; }
+        .dept-donut-card[data-color="green"] .dept-donut-kpi-count { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+
+        .dept-donut-card[data-color="purple"] .dept-donut-progress { stroke: #8B5CF6; }
+        .dept-donut-card[data-color="purple"] .dept-donut-pct { color: #8B5CF6; }
+        .dept-donut-card[data-color="purple"] .dept-donut-kpi-count { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; }
+
+        .dept-donut-card[data-color="orange"] .dept-donut-progress { stroke: #F59E0B; }
+        .dept-donut-card[data-color="orange"] .dept-donut-pct { color: #F59E0B; }
+        .dept-donut-card[data-color="orange"] .dept-donut-kpi-count { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
+
+        .dept-donut-card[data-color="cyan"] .dept-donut-progress { stroke: #06B6D4; }
+        .dept-donut-card[data-color="cyan"] .dept-donut-pct { color: #06B6D4; }
+        .dept-donut-card[data-color="cyan"] .dept-donut-kpi-count { background: rgba(6, 182, 212, 0.1); color: #06B6D4; }
+
+        .dept-donut-card[data-color="pink"] .dept-donut-progress { stroke: #EC4899; }
+        .dept-donut-card[data-color="pink"] .dept-donut-pct { color: #EC4899; }
+        .dept-donut-card[data-color="pink"] .dept-donut-kpi-count { background: rgba(236, 72, 153, 0.1); color: #EC4899; }
+
+        .dept-donut-card[data-color="indigo"] .dept-donut-progress { stroke: #6366F1; }
+        .dept-donut-card[data-color="indigo"] .dept-donut-pct { color: #6366F1; }
+        .dept-donut-card[data-color="indigo"] .dept-donut-kpi-count { background: rgba(99, 102, 241, 0.1); color: #6366F1; }
+
+        /* 반응형 - 도넛 그리드 */
+        @media (max-width: 1400px) {
+            .dept-donut-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .dept-donut-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .dept-donut-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .dept-donut-card {
+                padding: 16px;
+            }
+            .dept-donut-wrap {
+                width: 80px;
+                height: 80px;
+            }
+            .dept-donut-pct {
+                font-size: 18px;
+            }
+            .dept-donut-name {
+                font-size: 13px;
+            }
         }
 
         .dept-card {
@@ -1547,8 +2166,8 @@
             left: 0;
             right: 0;
             padding: 16px 20px;
-            background: var(--bg-elevated);
-            border-top: 1px solid var(--border-light);
+            background: rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -1557,7 +2176,7 @@
         .sidebar-user-avatar {
             width: 40px;
             height: 40px;
-            background: var(--blue-light);
+            background: #3B82F6;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1573,7 +2192,7 @@
         .sidebar-user-name {
             font-size: 14px;
             font-weight: 600;
-            color: var(--text-primary);
+            color: white;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -1581,14 +2200,14 @@
 
         .sidebar-user-role {
             font-size: 12px;
-            color: var(--text-tertiary);
+            color: rgba(255,255,255,0.5);
         }
 
         .sidebar-logout-btn {
             width: 36px;
             height: 36px;
             border: none;
-            background: var(--bg);
+            background: rgba(255,255,255,0.1);
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
@@ -1596,7 +2215,7 @@
         }
 
         .sidebar-logout-btn:hover {
-            background: var(--red-light);
+            background: rgba(239, 68, 68, 0.3);
         }
 
         .task-list {
@@ -1881,6 +2500,173 @@
             margin-top: 6px;
         }
 
+        /* 통계 모달 */
+        .stat-modal .modal-box {
+            max-width: 700px;
+            max-height: 80vh;
+        }
+
+        .stat-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .stat-modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .stat-modal-body {
+            padding: 20px 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .stat-team-section {
+            margin-bottom: 12px;
+        }
+
+        .stat-team-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            background: var(--blue-light);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .stat-team-header:hover {
+            background: #dbeafe;
+        }
+
+        .stat-team-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s ease;
+            color: var(--text-tertiary);
+        }
+
+        .stat-team-header.open .arrow {
+            transform: rotate(180deg);
+        }
+
+        .stat-team-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .stat-team-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-team-count {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .stat-team-content {
+            display: none;
+            padding: 8px 0;
+        }
+
+        .stat-team-content.open {
+            display: block;
+        }
+
+        .stat-kpi-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .stat-kpi-item:hover {
+            background: var(--border-light);
+        }
+
+        .stat-kpi-name {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .stat-kpi-progress {
+            font-size: 16px;
+            font-weight: 700;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .stat-kpi-progress.delayed {
+            color: #EF4444;
+        }
+
+        .stat-kpi-progress.done {
+            color: #10B981;
+        }
+
+        .stat-member-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+
+        .stat-member-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--blue-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--blue);
+        }
+
+        .stat-member-info {
+            flex: 1;
+        }
+
+        .stat-member-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-member-role {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .stat-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .stat-empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
         /* 토스트 */
         .toast {
             position: fixed;
@@ -1911,6 +2697,12 @@
             .goal-progress-bar { order: 3; max-width: 100%; flex-basis: 100%; margin: 0; }
         }
 
+        @media (max-width: 1200px) {
+            .stats-grid-5 { grid-template-columns: repeat(5, 1fr); gap: 12px; }
+            .stat-card { padding: 16px 12px; }
+            .stat-value { font-size: 28px; }
+        }
+
         @media (max-width: 900px) {
             .sidebar { display: none; }
             .hero { padding: 24px; }
@@ -1918,12 +2710,73 @@
             .detail-hero { padding: 24px; }
             .detail-content { padding: 24px; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid-5 { grid-template-columns: repeat(3, 1fr); }
             .goal-banner { padding: 16px 24px; }
         }
 
         /* ========== 모바일 최적화 (600px 이하) ========== */
         @media (max-width: 600px) {
-            /* 상단 슬로건 배너 */
+            /* 새 히어로 그라데이션 모바일 */
+            .hero-gradient {
+                padding: 20px 16px;
+                border-radius: 0 0 16px 16px;
+            }
+
+            .hero-gradient .hero-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .hero-gradient .hero-title {
+                font-size: 20px;
+            }
+
+            .hero-gradient .hero-slogan {
+                font-size: 13px;
+            }
+
+            .hero-gradient .hero-actions {
+                width: 100%;
+                align-items: stretch;
+            }
+
+            .hero-progress-section {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+                padding: 10px 16px;
+            }
+
+            .hero-progress-stats {
+                font-size: 13px;
+            }
+
+            .hero-progress-current {
+                font-size: 18px;
+            }
+
+            .hero-progress-bar {
+                width: 100px;
+            }
+
+            .hero-progress-badge {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+
+            .hero-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .hero-controls .period-filter {
+                width: 100%;
+                margin-right: 0;
+            }
+
+            /* 상단 슬로건 배너 (기존) */
             .top-slogan-bar {
                 padding: 24px 16px;
             }
@@ -3157,138 +4010,62 @@
         <main class="main">
             <!-- 메인 페이지 -->
             <div class="page active" id="mainPage">
-                <!-- 상단 슬로건 히어로 배너 -->
-                <div class="top-slogan-bar">
-                    <div class="slogan-content">
-                        <div class="slogan-company">2026 넷폼알앤디</div>
-                        <div class="slogan-main">본질을 <span class="slogan-highlight">측정 & 관리</span>하며 2배 성장</div>
-                        <div class="slogan-progress-wrap">
-                            <div class="slogan-stats">
-                                <span>현재</span>
-                                <span class="slogan-current" id="topCurrentPct">72%</span>
-                                <span class="slogan-target">→ 목표 80%</span>
-                            </div>
-                            <div class="slogan-progress-bar">
-                                <div class="slogan-progress-fill" id="topProgressFill" style="width: 90%"></div>
-                            </div>
-                            <span class="slogan-achievement" id="topProgressText">90.0% 달성</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="hero">
+                <!-- 전사 KPI 대시보드 (새 디자인) -->
+                <div class="hero hero-gradient">
                     <div class="hero-top">
                         <div class="hero-title-wrap">
                             <h1 class="hero-title">전사 KPI 대시보드</h1>
-                            <div class="hero-meta-row">
-                                <span class="hero-period-text" id="periodLabel">2026년 1월 기준</span>
-                                <div class="last-update">
-                                    <div class="pulse-dot"></div>
-                                    <span id="lastUpdateText">마지막 업데이트: 1월 5일 15:36</span>
+                            <div class="hero-slogan">"본질을 <span class="highlight">측정 & 관리</span>하며 2배 성장"</div>
+                        </div>
+                        <div class="hero-actions">
+                            <div class="hero-progress-section hero-progress-dark">
+                                <div class="hero-progress-stats">
+                                    <span class="hero-progress-label">현재</span>
+                                    <span class="hero-progress-current" id="topCurrentPct">4%</span>
+                                    <span class="hero-progress-arrow">→</span>
+                                    <span class="hero-progress-target">목표 100%</span>
+                                </div>
+                                <div class="hero-progress-bar">
+                                    <div class="hero-progress-fill" id="topProgressFill" style="width: 4%"></div>
+                                </div>
+                                <span class="hero-progress-badge" id="topProgressText">4.0% 달성</span>
+                            </div>
+                            <div class="hero-controls">
+                                <div class="login-status" id="loginStatus" onclick="openLoginModal()">
+                                    <span class="login-status-icon">🔐</span>
+                                    <span class="login-status-text">로그인</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="hero-actions">
-                            <div class="period-filter">
-                                <select class="period-select" id="yearFilter" onchange="updatePeriod()">
-                                    <option value="2026">2026년</option>
-                                    <option value="2025">2025년</option>
-                                </select>
-                                <select class="period-select" id="periodType" onchange="updatePeriod()">
-                                    <option value="month">월별</option>
-                                    <option value="quarter">분기별</option>
-                                </select>
-                                <select class="period-select" id="periodValue" onchange="updatePeriod()">
-                                    <option value="1">1월</option>
-                                    <option value="2">2월</option>
-                                    <option value="3">3월</option>
-                                    <option value="4">4월</option>
-                                    <option value="5">5월</option>
-                                    <option value="6">6월</option>
-                                    <option value="7">7월</option>
-                                    <option value="8">8월</option>
-                                    <option value="9">9월</option>
-                                    <option value="10">10월</option>
-                                    <option value="11">11월</option>
-                                    <option value="12">12월</option>
-                                </select>
-                            </div>
-                            <div class="login-status" id="loginStatus" onclick="openLoginModal()">
-                                <span class="login-status-icon">🔐</span>
-                                <span class="login-status-text">로그인</span>
-                            </div>
-                            <button class="theme-toggle" onclick="toggleTheme()" title="테마 변경">
-                                <span class="theme-icon-light">🌙</span>
-                                <span class="theme-icon-dark">☀️</span>
-                            </button>
-                            <button class="btn btn-secondary btn-icon" onclick="togglePresentation()" title="프레젠테이션 모드">📺</button>
-                        </div>
                     </div>
 
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-label">전체 진척률</div>
-                            <div class="stat-value" id="statProgress">0%</div>
-                            <div class="stat-change" id="statProgressChange"></div>
+                    <div class="stats-grid stats-grid-5">
+                        <div class="stat-card stat-card-glass">
+                            <div class="stat-label">마감일</div>
+                            <div class="stat-value stat-deadline" id="statDeadline">D-336</div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card stat-card-glass stat-clickable" onclick="openStatModal('delayed')">
+                            <div class="stat-label">지연 KPI</div>
+                            <div class="stat-value stat-delayed" id="statDelayed">0</div>
+                        </div>
+                        <div class="stat-card stat-card-glass stat-clickable" onclick="openStatModal('done')">
                             <div class="stat-label">달성 KPI</div>
                             <div class="stat-value" id="statDone">0</div>
-                            <div class="stat-change" id="statDoneChange"></div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card stat-card-glass stat-clickable" onclick="openStatModal('total')">
                             <div class="stat-label">전체 메인 KPI</div>
                             <div class="stat-value" id="statTotal">0</div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card stat-card-glass stat-clickable" onclick="openStatModal('members')">
                             <div class="stat-label">참여 인원</div>
                             <div class="stat-value" id="statMembers">0</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="content">
-                    <!-- 차트 -->
-                    <div class="chart-grid">
-                        <div class="card">
-                            <div class="card-title">부서별 진척률</div>
-                            <div class="chart-area">
-                                <canvas id="barChart"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-title">전체 달성 현황</div>
-                            <div class="donut-layout">
-                                <div class="donut-wrap">
-                                    <canvas id="donutChart"></canvas>
-                                    <div class="donut-center">
-                                        <div class="donut-value" id="donutPct">0%</div>
-                                        <div class="donut-label">KPI 달성률</div>
-                                    </div>
-                                </div>
-                                <div class="donut-stats">
-                                    <div class="donut-stat-row" title="달성한 KPI 수">
-                                        <span class="donut-stat-label">달성</span>
-                                        <span class="donut-stat-value green" id="dsDone">0</span>
-                                    </div>
-                                    <div class="donut-stat-row" title="진행중인 KPI 수">
-                                        <span class="donut-stat-label">진행중</span>
-                                        <span class="donut-stat-value orange" id="dsPending">0</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="content content-compact">
                     <!-- 부서별 현황 -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">부서별 현황</div>
-                            <div class="section-subtitle">7개 부서</div>
-                        </div>
-                        <div class="dept-grid" id="deptGrid"></div>
-                    </div>
+                    <div class="dept-unified-donut" id="deptGrid"></div>
                 </div>
             </div>
 
@@ -4033,8 +4810,8 @@
                 }
             }
             
-            renderDeptGrid();
             calcAll();
+            renderDeptGrid();
             
             // 상세 페이지 열려있으면 업데이트
             if (curDept && curSub) {
@@ -4053,8 +4830,8 @@
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, async (payload) => {
                     console.log('📡 Task 변경:', payload);
                     await loadTasksFromSupabase();
-                    renderDeptGrid();
                     calcAll();
+                    renderDeptGrid();
                     toast('🔄 데이터가 동기화되었습니다');
                 })
                 .subscribe();
@@ -4427,9 +5204,9 @@
                 },
                 {
                     id: 'rnd', name: '기술연구소', color: 'purple',
-                    leader: '신명희 리드매니저', headcount: 3,
+                    leader: '신명희 선임연구원', headcount: 3,
                     subDepts: [
-                        { id: 'rnd_team', name: '기술연구소', members: ['신명희 리드매니저', '심혜진 연구원', '김소정 연구원'] }
+                        { id: 'rnd_team', name: '기술연구소', members: ['신명희 선임연구원', '심혜진 연구원', '김소정 연구원'] }
                     ]
                 },
                 {
@@ -4577,9 +5354,9 @@
                 }
                 
                 renderNav();
+                calcAll();
                 renderDeptGrid();
                 initCharts();
-                calcAll();
                 updateLastUpdateTime();
                 animateProgressBars();
                 animateCountUp();
@@ -4798,32 +5575,96 @@
         }
 
         function renderDeptGrid() {
-            document.getElementById('deptGrid').innerHTML = ORG.departments.map(d => {
+            const colors = ['#3B82F6', '#06B6D4', '#10B981', '#EC4899', '#F59E0B', '#8B5CF6', '#6366F1'];
+            
+            // 부서별 통계 수집
+            const deptStats = ORG.departments.map((d, idx) => {
                 const st = getDeptStats(d.id);
-                const lastUpdater = getLastUpdaterForDept(d.id);
-                const hasKpi = st.mainKpiCount > 0;
-                
-                return `
-                    <div class="dept-card" onclick="showDetail('${d.id}')">
-                        <div class="dept-header">
-                            <div>
-                                <div class="dept-name">${d.name}</div>
-                                <div class="dept-leader">${d.leader}</div>
-                                ${hasKpi ? `<div class="dept-updated-by">✏️ 수정</div>` : ''}
-                                ${!hasKpi ? `<div class="dept-updated-by" style="color:var(--text-disabled)">KPI 미설정</div>` : ''}
-                            </div>
-                            <div class="dept-pct">${hasKpi ? st.avg + '%' : '-'}</div>
-                        </div>
-                        <div class="dept-bar">
-                            <div class="dept-bar-fill" data-progress="${hasKpi ? st.avg : 0}"></div>
-                        </div>
-                        <div class="dept-meta">${hasKpi ? `메인 KPI ${st.mainKpiCount}개` : 'KPI를 등록해주세요'}</div>
-                    </div>
-                `;
-            }).join('');
+                return {
+                    id: d.id,
+                    name: d.name,
+                    leader: d.leader,
+                    progress: st.mainKpiCount > 0 ? st.avg : 0,
+                    kpiCount: st.mainKpiCount,
+                    hasKpi: st.mainKpiCount > 0,
+                    color: colors[idx % colors.length]
+                };
+            });
 
-            // 애니메이션 적용
-            setTimeout(animateProgressBars, 100);
+            // 전체 진척률은 상단 topCurrentPct에서 가져옴 (calcAll에서 계산됨)
+            const totalAvg = parseInt(document.getElementById('topCurrentPct')?.textContent) || 0;
+
+            // 도넛 세그먼트 계산 (전체 = 100%)
+            const circumference = 565.48; // 2 * PI * 90
+            const totalProgress = totalAvg;
+            const progressOffset = circumference - (circumference * totalProgress / 100);
+
+            // HTML 생성
+            document.getElementById('deptGrid').innerHTML = `
+                <div class="dept-unified-header">부서별 현황</div>
+                <div class="dept-unified-content">
+                    <div class="unified-donut-chart">
+                        <svg class="unified-donut-svg" viewBox="0 0 200 200">
+                            <circle class="unified-donut-bg" cx="100" cy="100" r="90"></circle>
+                            <circle class="unified-donut-segment" cx="100" cy="100" r="90" 
+                                stroke="${colors[0]}"
+                                stroke-dasharray="${circumference}"
+                                stroke-dashoffset="${progressOffset}"
+                                data-offset="${progressOffset}"></circle>
+                        </svg>
+                        <div class="unified-donut-center">
+                            <div class="unified-donut-pct">${totalAvg}%</div>
+                            <div class="unified-donut-label">전체 진척률</div>
+                        </div>
+                    </div>
+                    <div class="unified-donut-legend">
+                        ${deptStats.map(d => `
+                            <div class="legend-item" onclick="showDetail('${d.id}')">
+                                <div class="legend-left">
+                                    <div class="legend-color" style="background: ${d.color}"></div>
+                                    <span class="legend-name">${d.name}</span>
+                                    <span class="legend-leader">${d.leader}</span>
+                                </div>
+                                <div class="legend-center">
+                                    <div class="legend-progress-bar">
+                                        <div class="legend-progress-fill" style="width: ${d.hasKpi ? d.progress : 0}%; background: ${d.color}"></div>
+                                    </div>
+                                </div>
+                                <div class="legend-right">
+                                    <span class="legend-pct" style="color: ${d.color}">${d.hasKpi ? d.progress + '%' : '-'}</span>
+                                    <span class="legend-kpi">${d.hasKpi ? 'KPI ' + d.kpiCount + '개' : 'KPI 미설정'}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // 도넛 애니메이션 적용
+            setTimeout(animateUnifiedDonut, 100);
+        }
+
+        // 통합 도넛 애니메이션
+        function animateUnifiedDonut() {
+            const segment = document.querySelector('.unified-donut-segment');
+            if (segment) {
+                const targetOffset = parseFloat(segment.dataset.offset);
+                segment.style.strokeDashoffset = 565.48; // 초기값 (circumference)
+                setTimeout(() => {
+                    segment.style.strokeDashoffset = targetOffset;
+                }, 50);
+            }
+        }
+
+        // 도넛 프로그레스 애니메이션 (기존 호환)
+        function animateDonutProgress() {
+            document.querySelectorAll('.dept-donut-progress').forEach(circle => {
+                const targetOffset = parseFloat(circle.dataset.offset);
+                circle.style.strokeDashoffset = 251.2; // 초기값
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = targetOffset;
+                }, 50);
+            });
         }
 
         // 부서의 마지막 수정자 찾기 (KPI 기반)
@@ -4848,7 +5689,7 @@
             return lastUpdater;
         }
 
-        // 프로그레스 바 애니메이션
+        // 프로그레스 바 애니메이션 (기존 호환)
         function animateProgressBars() {
             document.querySelectorAll('.dept-bar-fill').forEach(bar => {
                 const progress = bar.dataset.progress;
@@ -4920,6 +5761,7 @@
             let teamsWithKpi = 0;
             let totalMainKpis = 0;
             let completedMainKpis = 0;
+            let delayedMainKpis = 0; // 50% 미만 KPI
 
             ORG.departments.forEach(d => {
                 let deptProgress = 0;
@@ -4932,14 +5774,16 @@
                         deptTeamsWithKpi++;
                         teamsWithKpi++;
 
-                        // 메인 KPI 완료 카운트
+                        // 메인 KPI 완료/지연 카운트
                         const kpi = kpiData[s.id];
                         if (kpi && kpi.mainMetrics) {
                             kpi.mainMetrics.forEach(m => {
                                 totalMainKpis++;
                                 const current = parseFloat(m.value) || 0;
                                 const target = parseFloat(m.target) || 1;
-                                if (current >= target) completedMainKpis++;
+                                const pct = Math.round((current / target) * 100);
+                                if (pct >= 100) completedMainKpis++;
+                                else if (pct < 50) delayedMainKpis++;
                             });
                         }
                     }
@@ -4962,26 +5806,24 @@
                 });
             });
 
+            // 마감일 계산 (2026년 12월 31일)
+            const deadline = new Date('2026-12-31');
+            const today = new Date();
+            const diffTime = deadline - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
             // 통계 업데이트
-            document.getElementById('statProgress').textContent = companyProgress + '%';
+            document.getElementById('statDeadline').textContent = 'D-' + diffDays;
+            document.getElementById('statDelayed').textContent = delayedMainKpis;
             document.getElementById('statDone').textContent = completedMainKpis;
             document.getElementById('statTotal').textContent = totalMainKpis;
             document.getElementById('statMembers').textContent = totalMembers;
-
-            // 도넛 차트
-            const completionRate = totalMainKpis ? Math.round(completedMainKpis / totalMainKpis * 100) : 0;
-            document.getElementById('donutPct').textContent = completionRate + '%';
-            document.getElementById('dsDone').textContent = completedMainKpis;
-            document.getElementById('dsPending').textContent = totalMainKpis - completedMainKpis;
 
             // 상단 슬로건 바 업데이트
             const goalRatio = Math.min((companyProgress / GOAL_TARGET) * 100, 100);
             document.getElementById('topCurrentPct').textContent = companyProgress + '%';
             document.getElementById('topProgressFill').style.width = goalRatio + '%';
-            document.getElementById('topProgressText').textContent = goalRatio.toFixed(1) + '% 달성';
-
-            if (barChart) { barChart.data.datasets[0].data = deptData; barChart.update(); }
-            if (donutChart) { donutChart.data.datasets[0].data = [completedMainKpis, totalMainKpis - completedMainKpis]; donutChart.update(); }
+            document.getElementById('topProgressText').textContent = companyProgress + '% 달성';
 
             renderDeptGrid();
             renderNav();
@@ -5015,61 +5857,7 @@
         }
 
         function initCharts() {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const gridColor = isDark ? '#2a2a2a' : '#f2f4f6';
-            const textColor = isDark ? '#b0b8c1' : '#4e5968';
-
-            barChart = new Chart(document.getElementById('barChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ORG.departments.map(d => d.name.replace('본부', '').replace('팀', '').replace('기술연구소', '연구소')),
-                    datasets: [{ data: [0,0,0,0,0,0,0], backgroundColor: '#3182f6', borderRadius: 6, barThickness: 32 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#191f28',
-                            titleFont: { size: 14, weight: 'bold' },
-                            bodyFont: { size: 13 },
-                            padding: 12,
-                            cornerRadius: 8,
-                            callbacks: {
-                                label: function(context) {
-                                    return '진척률: ' + context.raw + '%';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%', color: textColor }, grid: { color: gridColor } },
-                        x: { grid: { display: false }, ticks: { font: { size: 12 }, color: textColor } }
-                    }
-                }
-            });
-
-            donutChart = new Chart(document.getElementById('donutChart').getContext('2d'), {
-                type: 'doughnut',
-                data: { datasets: [{ data: [0, 100], backgroundColor: ['#3182f6', isDark ? '#2a2a2a' : '#e5e8eb'], borderWidth: 0 }] },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '75%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#191f28',
-                            callbacks: {
-                                label: function(context) {
-                                    const labels = ['완료', '진행중'];
-                                    return labels[context.dataIndex] + ': ' + context.raw + '건';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            // 차트 영역 제거됨 - 함수 유지 (호환성)
         }
 
         function goMain() {
@@ -5582,21 +6370,7 @@
         }
 
         function updateChartColors() {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const gridColor = isDark ? '#2a2a2a' : '#f2f4f6';
-            const textColor = isDark ? '#b0b8c1' : '#4e5968';
-
-            if (barChart) {
-                barChart.options.scales.y.grid.color = gridColor;
-                barChart.options.scales.y.ticks.color = textColor;
-                barChart.options.scales.x.ticks.color = textColor;
-                barChart.update();
-            }
-
-            if (donutChart) {
-                donutChart.data.datasets[0].backgroundColor = ['#3182f6', isDark ? '#2a2a2a' : '#e5e8eb'];
-                donutChart.update();
-            }
+            // 차트 영역 제거됨 - 함수 유지 (호환성)
         }
 
         // 초기 테마 로드
@@ -6105,6 +6879,293 @@
             hideLoginPage();
         }
 
+        // 통계 모달 함수들
+        function openStatModal(type) {
+            const modal = document.getElementById('statModal');
+            const title = document.getElementById('statModalTitle');
+            const body = document.getElementById('statModalBody');
+            
+            const colors = ['#3B82F6', '#06B6D4', '#10B981', '#EC4899', '#F59E0B', '#8B5CF6', '#6366F1'];
+            
+            let html = '';
+            
+            if (type === 'delayed') {
+                title.textContent = '지연 KPI (50% 미만)';
+                html = renderDelayedKpis(colors);
+            } else if (type === 'done') {
+                title.textContent = '달성 KPI (100% 완료)';
+                html = renderDoneKpis(colors);
+            } else if (type === 'total') {
+                title.textContent = '전체 메인 KPI';
+                html = renderAllKpis(colors);
+            } else if (type === 'members') {
+                title.textContent = '참여 인원';
+                html = renderMembers(colors);
+            }
+            
+            body.innerHTML = html;
+            modal.classList.add('show');
+            
+            // 모달 밖 클릭시 닫기
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    closeStatModal();
+                }
+            };
+        }
+        
+        function closeStatModal() {
+            document.getElementById('statModal').classList.remove('show');
+        }
+        
+        function toggleTeamSection(el) {
+            const header = el;
+            const content = header.nextElementSibling;
+            header.classList.toggle('open');
+            content.classList.toggle('open');
+        }
+        
+        function goToTeamKpi(deptId, subId) {
+            closeStatModal();
+            showDetail(deptId, subId);
+        }
+        
+        function renderDelayedKpis(colors) {
+            let html = '';
+            let hasDelayed = false;
+            
+            ORG.departments.forEach((d, dIdx) => {
+                let teamKpis = [];
+                
+                d.subDepts.forEach(s => {
+                    const kpi = kpiData[s.id];
+                    if (kpi && kpi.mainMetrics) {
+                        kpi.mainMetrics.forEach((m, mIdx) => {
+                            const current = parseFloat(m.value) || 0;
+                            const target = parseFloat(m.target) || 1;
+                            const pct = Math.round((current / target) * 100);
+                            if (pct < 50) {
+                                const kpiName = m.label || m.name || `KPI ${mIdx + 1}`;
+                                teamKpis.push({ 
+                                    team: s.name, 
+                                    teamId: s.id,
+                                    deptId: d.id,
+                                    name: kpiName, 
+                                    pct,
+                                    current,
+                                    target,
+                                    unit: m.unit || ''
+                                });
+                                hasDelayed = true;
+                            }
+                        });
+                    }
+                });
+                
+                if (teamKpis.length > 0) {
+                    html += `
+                        <div class="stat-team-section">
+                            <div class="stat-team-header" onclick="toggleTeamSection(this)">
+                                <div class="stat-team-color" style="background: ${colors[dIdx % colors.length]}"></div>
+                                <span class="stat-team-name">${d.name}</span>
+                                <span class="stat-team-count">${teamKpis.length}개</span>
+                                <span class="arrow">▼</span>
+                            </div>
+                            <div class="stat-team-content">
+                                ${teamKpis.map(k => `
+                                    <div class="stat-kpi-item" onclick="goToTeamKpi('${k.deptId}', '${k.teamId}')">
+                                        <span class="stat-kpi-name">[${k.team}] ${k.name} (${k.current}/${k.target}${k.unit})</span>
+                                        <span class="stat-kpi-progress delayed">${k.pct}%</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (!hasDelayed) {
+                html = `<div class="stat-empty"><div class="stat-empty-icon">🎉</div><div>지연된 KPI가 없습니다!</div></div>`;
+            }
+            
+            return html;
+        }
+        
+        function renderDoneKpis(colors) {
+            let html = '';
+            let hasDone = false;
+            
+            ORG.departments.forEach((d, dIdx) => {
+                let teamKpis = [];
+                
+                d.subDepts.forEach(s => {
+                    const kpi = kpiData[s.id];
+                    if (kpi && kpi.mainMetrics) {
+                        kpi.mainMetrics.forEach((m, mIdx) => {
+                            const current = parseFloat(m.value) || 0;
+                            const target = parseFloat(m.target) || 1;
+                            const pct = Math.round((current / target) * 100);
+                            if (pct >= 100) {
+                                const kpiName = m.label || m.name || `KPI ${mIdx + 1}`;
+                                teamKpis.push({ 
+                                    team: s.name,
+                                    teamId: s.id,
+                                    deptId: d.id,
+                                    name: kpiName, 
+                                    pct,
+                                    current,
+                                    target,
+                                    unit: m.unit || ''
+                                });
+                                hasDone = true;
+                            }
+                        });
+                    }
+                });
+                
+                if (teamKpis.length > 0) {
+                    html += `
+                        <div class="stat-team-section">
+                            <div class="stat-team-header" onclick="toggleTeamSection(this)">
+                                <div class="stat-team-color" style="background: ${colors[dIdx % colors.length]}"></div>
+                                <span class="stat-team-name">${d.name}</span>
+                                <span class="stat-team-count">${teamKpis.length}개</span>
+                                <span class="arrow">▼</span>
+                            </div>
+                            <div class="stat-team-content">
+                                ${teamKpis.map(k => `
+                                    <div class="stat-kpi-item" onclick="goToTeamKpi('${k.deptId}', '${k.teamId}')">
+                                        <span class="stat-kpi-name">[${k.team}] ${k.name} (${k.current}/${k.target}${k.unit})</span>
+                                        <span class="stat-kpi-progress done">✓ ${k.pct}%</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (!hasDone) {
+                html = `<div class="stat-empty"><div class="stat-empty-icon">📊</div><div>달성된 KPI가 없습니다</div></div>`;
+            }
+            
+            return html;
+        }
+        
+        function renderAllKpis(colors) {
+            let html = '';
+            let hasKpi = false;
+            
+            ORG.departments.forEach((d, dIdx) => {
+                let teamKpis = [];
+                
+                d.subDepts.forEach(s => {
+                    const kpi = kpiData[s.id];
+                    if (kpi && kpi.mainMetrics) {
+                        kpi.mainMetrics.forEach((m, mIdx) => {
+                            const current = parseFloat(m.value) || 0;
+                            const target = parseFloat(m.target) || 1;
+                            const pct = Math.round((current / target) * 100);
+                            const kpiName = m.label || m.name || `KPI ${mIdx + 1}`;
+                            teamKpis.push({ 
+                                team: s.name,
+                                teamId: s.id,
+                                deptId: d.id,
+                                name: kpiName, 
+                                pct, 
+                                current, 
+                                target, 
+                                unit: m.unit || '' 
+                            });
+                            hasKpi = true;
+                        });
+                    }
+                });
+                
+                if (teamKpis.length > 0) {
+                    html += `
+                        <div class="stat-team-section">
+                            <div class="stat-team-header" onclick="toggleTeamSection(this)">
+                                <div class="stat-team-color" style="background: ${colors[dIdx % colors.length]}"></div>
+                                <span class="stat-team-name">${d.name}</span>
+                                <span class="stat-team-count">${teamKpis.length}개</span>
+                                <span class="arrow">▼</span>
+                            </div>
+                            <div class="stat-team-content">
+                                ${teamKpis.map(k => `
+                                    <div class="stat-kpi-item" onclick="goToTeamKpi('${k.deptId}', '${k.teamId}')">
+                                        <span class="stat-kpi-name">[${k.team}] ${k.name} (${k.current}/${k.target}${k.unit})</span>
+                                        <span class="stat-kpi-progress ${k.pct >= 100 ? 'done' : k.pct < 50 ? 'delayed' : ''}">${k.pct}%</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (!hasKpi) {
+                html = `<div class="stat-empty"><div class="stat-empty-icon">📋</div><div>등록된 KPI가 없습니다</div></div>`;
+            }
+            
+            return html;
+        }
+        
+        function renderMembers(colors) {
+            let html = '';
+            let hasMembers = false;
+            
+            ORG.departments.forEach((d, dIdx) => {
+                let teamMembers = [];
+                
+                d.subDepts.forEach(s => {
+                    const kpi = kpiData[s.id];
+                    if (kpi && kpi.mainMetrics && kpi.mainMetrics.length > 0) {
+                        s.members.forEach(m => {
+                            teamMembers.push({ 
+                                team: s.name, 
+                                teamId: s.id,
+                                deptId: d.id,
+                                name: m.name, 
+                                role: m.role || '팀원' 
+                            });
+                            hasMembers = true;
+                        });
+                    }
+                });
+                
+                if (teamMembers.length > 0) {
+                    html += `
+                        <div class="stat-team-section">
+                            <div class="stat-team-header" onclick="toggleTeamSection(this)">
+                                <div class="stat-team-color" style="background: ${colors[dIdx % colors.length]}"></div>
+                                <span class="stat-team-name">${d.name}</span>
+                                <span class="stat-team-count">${teamMembers.length}명</span>
+                                <span class="arrow">▼</span>
+                            </div>
+                            <div class="stat-team-content">
+                                ${teamMembers.map(m => `
+                                    <div class="stat-member-item" onclick="goToTeamKpi('${m.deptId}', '${m.teamId}')" style="cursor: pointer;">
+                                        <div class="stat-member-avatar">${m.name.slice(-2)}</div>
+                                        <div class="stat-member-info">
+                                            <div class="stat-member-name">${m.name}</div>
+                                            <div class="stat-member-role">${m.team} · ${m.role}</div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (!hasMembers) {
+                html = `<div class="stat-empty"><div class="stat-empty-icon">👥</div><div>참여 인원이 없습니다</div></div>`;
+            }
+            
+            return html;
+        }
+
         function clearPinInputs() {
             const inputs = document.querySelectorAll('.pin-input');
             inputs.forEach(input => {
@@ -6305,6 +7366,19 @@
                 <button class="login-guest-btn" onclick="guestMode()">
                     로그인 없이 둘러보기
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 통계 모달 -->
+    <div class="modal stat-modal" id="statModal">
+        <div class="modal-box stat-modal-box">
+            <div class="stat-modal-header">
+                <h3 class="stat-modal-title" id="statModalTitle">지연 KPI</h3>
+                <button class="modal-close" onclick="closeStatModal()">×</button>
+            </div>
+            <div class="stat-modal-body" id="statModalBody">
+                <!-- 동적 콘텐츠 -->
             </div>
         </div>
     </div>

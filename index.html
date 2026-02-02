@@ -1107,13 +1107,17 @@
             font-weight: 600;
             color: var(--text-primary);
             white-space: nowrap;
+            min-width: 110px;
         }
 
         .legend-leader {
-            font-size: 14px;
+            font-size: 13px;
             color: #64748b;
             margin-left: 10px;
             white-space: nowrap;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .legend-center {
@@ -4638,6 +4642,8 @@
         async function createInitiative(init) {
             if (!supabaseClient) return null;
             
+            console.log('📋 Initiative 생성 시작 - curSub:', curSub, 'init:', init);
+            
             try {
                 const { data, error } = await supabaseClient
                     .from('initiatives')
@@ -4876,11 +4882,14 @@
                 : (selectedAssignees ? selectedAssignees.split(', ').filter(Boolean) : []);
 
             container.innerHTML = sub.members.map(m => {
-                const isSelected = selectedArray.includes(m);
+                // 문자열 또는 객체 처리
+                const memberStr = typeof m === 'string' ? m : `${m.name} ${m.role}`;
+                const memberName = typeof m === 'string' ? m.split(' ')[0] : m.name;
+                const isSelected = selectedArray.includes(memberStr) || selectedArray.some(s => s.includes(memberName));
                 return `
-                    <label class="assignee-checkbox-item ${isSelected ? 'selected' : ''}" onclick="toggleAssignee(this, '${m}')">
-                        <input type="checkbox" value="${m}" ${isSelected ? 'checked' : ''}>
-                        ${getName(m)}
+                    <label class="assignee-checkbox-item ${isSelected ? 'selected' : ''}" onclick="toggleAssignee(this, '${memberStr.replace(/'/g, "\\'")}')">
+                        <input type="checkbox" value="${memberStr}" ${isSelected ? 'checked' : ''}>
+                        ${memberName}
                     </label>
                 `;
             }).join('');
@@ -4950,6 +4959,8 @@
 
         // Initiative 저장
         async function saveInitiative() {
+            console.log('💾 Initiative 저장 시작 - curSub:', curSub);
+            
             const name = document.getElementById('initName').value.trim();
             if (!name) {
                 alert('Initiative 이름을 입력하세요.');
@@ -4965,6 +4976,8 @@
                 dueDate: document.getElementById('initDueDate').value
             };
             
+            console.log('💾 저장할 데이터:', initData);
+            
             const editId = document.getElementById('initEditId').value;
             
             if (editId) {
@@ -4972,12 +4985,18 @@
                 const success = await updateInitiative(editId, initData);
                 if (success) {
                     toast(`✏️ ${getTermLabel('title')}가 수정되었습니다`);
+                } else {
+                    console.error('❌ Initiative 수정 실패');
                 }
             } else {
                 // 추가
                 const result = await createInitiative(initData);
                 if (result) {
                     toast(`✅ ${getTermLabel('title')}가 추가되었습니다`);
+                    console.log('✅ 저장 성공:', result);
+                } else {
+                    console.error('❌ Initiative 추가 실패');
+                    toast('❌ 저장 실패. 콘솔을 확인하세요.');
                 }
             }
             
@@ -5384,9 +5403,9 @@
             departments: [
                 {
                     id: 'sales', name: '영업본부', color: 'blue',
-                    leader: '황윤선 상무이사', headcount: 10,
+                    leader: '황윤선', leaderFull: '황윤선 상무이사', headcount: 11,
                     subDepts: [
-                        { id: 'sales_1', name: '서비스운영 1팀', members: ['한준엽 리드매니저', '조재연 매니저', '정정훈 매니저', '김성민 매니저', '한지혜 매니저'] },
+                        { id: 'sales_1', name: '서비스운영 1팀', members: ['한준엽 리드매니저', '조재연 매니저', '정정훈 매니저', '김성민 매니저', '한지혜 매니저', '김경미 매니저'] },
                         { id: 'sales_2', name: '서비스운영 2팀', members: ['권정아 리드매니저', '김수진 매니저', '이지연 매니저'] },
                         { id: 'sales_3', name: '서비스운영 3팀', members: ['주현진 리드매니저', '송보람 매니저'] },
                         { id: 'sales_team', name: '영업팀', members: ['이필선 매니저'] }
@@ -5394,14 +5413,14 @@
                 },
                 {
                     id: 'design', name: '설계/적산팀', color: 'purple',
-                    leader: '조현식 이사', headcount: 4,
+                    leader: '조현식', leaderFull: '조현식 이사', headcount: 4,
                     subDepts: [
                         { id: 'apt_square', name: '아파트스퀘어팀', members: ['한인규 리드매니저', '김영성 매니저', '신수진 매니저', '정태윤 매니저'] }
                     ]
                 },
                 {
                     id: 'mgmt', name: '경영관리본부', color: 'orange',
-                    leader: '백정석 이사', headcount: 6,
+                    leader: '백정석', leaderFull: '백정석 이사', headcount: 6,
                     subDepts: [
                         { id: 'mgmt_team', name: '경영관리팀', members: ['신나영 리드매니저', '주유진 매니저', '최영옥 매니저', '김유림 매니저'] },
                         { id: 'growth', name: '그로스팀', members: ['이재훈 리드매니저', '김범석 매니저'] }
@@ -5409,14 +5428,14 @@
                 },
                 {
                     id: 'brand', name: '브랜드마케팅팀', color: 'pink',
-                    leader: '권혜영 리드매니저', headcount: 5,
+                    leader: '권혜영', leaderFull: '권혜영 리드매니저', headcount: 5,
                     subDepts: [
                         { id: 'brand_team', name: '브랜드마케팅팀', members: ['권혜영 리드매니저', '함지민 매니저', '김소라 매니저', '손예진 매니저', '최경선 매니저'] }
                     ]
                 },
                 {
                     id: 'commerce', name: '커머스사업본부', color: 'cyan',
-                    leader: '허지은 리드매니저', headcount: 8,
+                    leader: '허지은', leaderFull: '허지은 리드매니저', headcount: 8,
                     subDepts: [
                         { id: 'brand_comm', name: '브랜드커머스팀', members: ['허지은 리드매니저', '이란 매니저'] },
                         { id: 'media_comm', name: '미디어커머스팀', members: ['허지은 리드매니저', '방현수 리드매니저', '김소연 매니저', '남윤정 매니저'] },
@@ -5426,14 +5445,21 @@
                 },
                 {
                     id: 'rnd', name: '기술연구소', color: 'purple',
-                    leader: '신명희 선임연구원', headcount: 3,
+                    leader: '이정훈 / 신명희',
+                    leaderFull: '이정훈 연구소장 / 신명희 선임연구원',
+                    headcount: 4,
                     subDepts: [
-                        { id: 'rnd_team', name: '기술연구소', members: ['신명희 선임연구원', '심혜진 연구원', '김소정 연구원'] }
+                        { id: 'rnd_team', name: '기술연구소', members: [
+                            { name: '이정훈', role: '연구소장' },
+                            { name: '신명희', role: '선임연구원' },
+                            { name: '심혜진', role: '연구원' },
+                            { name: '김소정', role: '연구원' }
+                        ]}
                     ]
                 },
                 {
                     id: 'factory', name: '용인공장', color: 'green',
-                    leader: '정영재 부사장 / 김성준 공장장', headcount: 3,
+                    leader: '정영재 / 김성준', leaderFull: '정영재 부사장 / 김성준 공장장', headcount: 3,
                     subDepts: [
                         { id: 'factory_admin', name: '관리팀', members: ['이나라 매니저'] },
                         { id: 'factory_prod', name: '생산/품질관리팀', members: ['이재민 리드매니저', '김유진 매니저'] }
@@ -5665,8 +5691,16 @@
             }
         }
 
-        const getName = f => f.split(' ')[0];
-        const getAvatar = f => { const n = f.split(' ')[0]; return n.length >= 2 ? n.slice(1) : n; };
+        const getName = f => {
+            if (!f) return '';
+            if (typeof f === 'object') return f.name || '';
+            return f.split(' ')[0];
+        };
+        const getAvatar = f => {
+            if (!f) return '';
+            const name = typeof f === 'object' ? (f.name || '') : f.split(' ')[0];
+            return name.length >= 2 ? name.slice(-2) : name;
+        };
         const getColorClass = p => p >= 80 ? 'high' : p < 50 ? 'low' : '';
 
         // D-day 계산
@@ -6102,7 +6136,7 @@
             document.getElementById('mainPage').classList.remove('active');
             document.getElementById('detailPage').classList.add('active');
             document.getElementById('detailTitle').textContent = d.name;
-            document.getElementById('detailSubtitle').textContent = d.leader;
+            document.getElementById('detailSubtitle').textContent = d.leaderFull || d.leader;
 
             // 본부 전체 통계 (메인 KPI 기반)
             const st = getDeptStats(deptId);
@@ -6148,13 +6182,19 @@
         }
 
         // Initiative 로드 및 렌더링
+        // Initiative 로드 및 렌더링
         async function loadAndRenderInitiatives() {
             // 팀별 텍스트 설정
             updateSectionLabels();
             
+            console.log('📋 Initiative 로드 시작 - curSub:', curSub);
+            
             if (supabaseClient && curSub) {
                 await loadInitiatives();
+                console.log('📋 Initiative 데이터:', initiativeData);
                 renderInitiatives();
+            } else {
+                console.log('❌ Supabase 또는 curSub 없음:', { supabaseClient: !!supabaseClient, curSub });
             }
         }
 
@@ -6204,7 +6244,12 @@
             if (!currentSub) return;
 
             const stats = {};
-            currentSub.members.forEach(m => { stats[m] = { name: m, sub: currentSub.name, total: 0, count: 0 }; });
+            currentSub.members.forEach(m => {
+                // 문자열인 경우 그대로 사용, 객체인 경우 name + role 조합
+                const memberKey = typeof m === 'string' ? m : `${m.name} ${m.role}`;
+                const memberName = typeof m === 'string' ? m : `${m.name} ${m.role}`;
+                stats[memberKey] = { name: memberName, sub: currentSub.name, total: 0, count: 0 };
+            });
             (taskData[curSub] || []).forEach(t => {
                 if (t.assignee && stats[t.assignee]) {
                     stats[t.assignee].total += t.progress;
@@ -6299,7 +6344,9 @@
 
             const d = ORG.departments.find(x => x.id === curDept);
             const s = d?.subDepts.find(x => x.id === curSub);
-            const members = s?.members || [];
+            const rawMembers = s?.members || [];
+            // 문자열/객체 둘 다 처리
+            const members = rawMembers.map(m => typeof m === 'string' ? m : `${m.name} ${m.role}`);
 
             document.getElementById('taskList').innerHTML = tasks.length ? tasks.map((t, i) => {
                 const isEdit = editIdx === i;
@@ -6348,7 +6395,10 @@
             const d = ORG.departments.find(x => x.id === curDept);
             const s = d?.subDepts.find(x => x.id === curSub);
             const sel = document.getElementById('newAssignee');
-            if (sel) sel.innerHTML = '<option value="">담당자</option>' + (s?.members || []).map(m => `<option value="${m}">${getName(m)}</option>`).join('');
+            if (sel) sel.innerHTML = '<option value="">담당자</option>' + (s?.members || []).map(m => {
+                const memberVal = typeof m === 'string' ? m : `${m.name} ${m.role}`;
+                return `<option value="${memberVal}">${getName(memberVal)}</option>`;
+            }).join('');
         }
 
         function showTaskForm() { document.getElementById('taskForm').classList.add('show'); document.getElementById('newName').focus(); }
@@ -7411,10 +7461,17 @@
                     if (kpi && kpi.mainMetrics && kpi.mainMetrics.length > 0) {
                         let teamMembers = [];
                         s.members.forEach(m => {
-                            teamMembers.push({ 
-                                name: m.name, 
-                                role: m.role || '팀원' 
-                            });
+                            // 문자열인 경우 파싱, 객체인 경우 그대로 사용
+                            let memberName, memberRole;
+                            if (typeof m === 'string') {
+                                const parts = m.split(' ');
+                                memberName = parts[0];
+                                memberRole = parts.slice(1).join(' ') || '팀원';
+                            } else {
+                                memberName = m.name;
+                                memberRole = m.role || '팀원';
+                            }
+                            teamMembers.push({ name: memberName, role: memberRole });
                             hasMembers = true;
                         });
                         if (teamMembers.length > 0) {

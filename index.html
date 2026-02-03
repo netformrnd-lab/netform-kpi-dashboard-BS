@@ -4062,14 +4062,13 @@
             gap: 12px;
         }
         .init-assignee {
-            min-width: 80px;
-            max-width: 120px;
-            text-align: center;
+            min-width: 120px;
+            max-width: 180px;
+            text-align: right;
             font-size: 13px;
             color: var(--text-secondary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            line-height: 1.4;
+            word-break: keep-all;
         }
         .init-operation {
             width: 70px;
@@ -5618,7 +5617,7 @@
                     if (e.target.id === 'initiativeModal') closeInitiativeModal();
                 });
                 
-                // 전시용 자동 복귀 기능 시작 (1분 유휴 시 메인으로)
+                // 전시용 자동 복귀 기능 시작 (50초 유휴 시 메인으로)
                 startIdleTimer();
             } catch (err) {
                 console.error('초기화 에러:', err);
@@ -5627,9 +5626,9 @@
             showLoading(false);
         });
         
-        // ========== 전시용 자동 복귀 기능 (1분 유휴 시 메인 페이지로) ==========
+        // ========== 전시용 자동 복귀 기능 (50초 유휴 시 메인 페이지로) ==========
         let idleTimer = null;
-        const IDLE_TIMEOUT = 60000; // 1분 (60초)
+        const IDLE_TIMEOUT = 50000; // 50초
 
         function startIdleTimer() {
             // 활동 감지 이벤트 등록
@@ -5641,7 +5640,7 @@
             
             // 타이머 시작
             resetIdleTimer();
-            console.log('⏱️ 전시 모드: 1분 유휴 시 메인 페이지로 자동 복귀');
+            console.log('⏱️ 전시 모드: 50초 유휴 시 메인 페이지로 자동 복귀');
         }
 
         function resetIdleTimer() {
@@ -5654,7 +5653,7 @@
             idleTimer = setTimeout(() => {
                 // 상세 페이지에 있을 때만 메인으로 이동
                 if (curDept !== null) {
-                    console.log('⏱️ 1분 유휴 감지 → 메인 페이지로 이동');
+                    console.log('⏱️ 50초 유휴 감지 → 메인 페이지로 이동');
                     goMain();
                     toast('🏠 메인 화면으로 돌아왔습니다');
                 }

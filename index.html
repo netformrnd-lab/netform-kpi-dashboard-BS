@@ -5458,10 +5458,9 @@
                 },
                 {
                     id: 'factory', name: '용인공장', color: 'green',
-                    leader: '정영재 / 김성준', leaderFull: '정영재 부사장 / 김성준 공장장', headcount: 3,
+                    leader: '정영재 / 김성준', leaderFull: '정영재 부사장 / 김성준 공장장', headcount: 4,
                     subDepts: [
-                        { id: 'factory_admin', name: '관리팀', members: ['이나라 매니저'] },
-                        { id: 'factory_prod', name: '생산/품질관리팀', members: ['이재민 리드매니저', '김유진 매니저'] }
+                        { id: 'factory_team', name: '용인공장', members: ['김성준 공장장', '이재민 리드매니저', '이나라 매니저', '김유진 매니저'] }
                     ]
                 }
             ]
@@ -5554,10 +5553,8 @@
                     { name: '특허 출원 준비', assignee: '심혜진 연구원', progress: 60, priority: 'high', dueDate: '2026-01-31', createdAt: now, updatedAt: now, updatedBy: '심혜진 연구원' },
                     { name: '신기술 리서치', assignee: '김소정 연구원', progress: 40, priority: 'low', dueDate: '2026-02-28', createdAt: now, updatedAt: now, updatedBy: '김소정 연구원' }
                 ],
-                'factory_admin': [
-                    { name: '공장 운영 효율화', assignee: '이나라 매니저', progress: 75, priority: 'medium', dueDate: '2026-01-25', createdAt: now, updatedAt: now, updatedBy: '이나라 매니저' }
-                ],
-                'factory_prod': [
+                'factory_team': [
+                    { name: '공장 운영 효율화', assignee: '이나라 매니저', progress: 75, priority: 'medium', dueDate: '2026-01-25', createdAt: now, updatedAt: now, updatedBy: '이나라 매니저' },
                     { name: '생산 라인 최적화', assignee: '이재민 리드매니저', progress: 90, priority: 'high', dueDate: '2026-01-18', createdAt: now, updatedAt: now, updatedBy: '이재민 리드매니저' },
                     { name: '품질 관리 시스템 구축', assignee: '김유진 매니저', progress: 65, priority: 'high', dueDate: '2026-02-01', createdAt: now, updatedAt: now, updatedBy: '김유진 매니저' }
                 ]
@@ -7114,7 +7111,7 @@
                 { id: 'brand_team', name: '브랜드마케팅팀', pin: '1234', subTeams: ['brand_team'] },
                 { id: 'commerce', name: '커머스사업본부', pin: '8420', subTeams: ['brand_comm', 'media_comm', 'overseas', 'moyeora'] },
                 { id: 'rnd', name: '기술연구소', pin: '7329', subTeams: ['rnd_team'] },
-                { id: 'factory', name: '용인공장', pin: '9514', subTeams: ['factory_admin', 'factory_prod'] },
+                { id: 'factory', name: '용인공장', pin: '9514', subTeams: ['factory_team'] },
                 { id: 'admin', name: '🔑 관리자', pin: '8686', isAdmin: true }
             ]
         };
